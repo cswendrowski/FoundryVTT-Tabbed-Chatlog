@@ -1,0 +1,28 @@
+{
+  "name": "tabbed-chatlog",
+  "title": "Tabbed Chatlog",
+  "description": "Splits the Chatlog into In Character (per scene), Rolls (per scene), and Out of Character (global).",
+  "version": "1.0.0",
+  "minimumCoreVersion": "0.6.2",
+  "compatibleCoreVersion": "0.6.0",
+  "author": "Cody Swendrowski <cody@swendrowski.us>",
+  "esmodules": [
+    "./tabbed-chatlog.js"
+  ],
+  "scripts": [
+    "scripts/lib/Sortable.js"
+  ],
+  "styles": [
+    "/styles/tabbed-chatlog.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "languages/en.json"
+    }
+  ],
+  "url": "https://github.com/cswendrowski/FoundryVTT-tabbed-chatlog",
+  "manifest": "https://github.com/cswendrowski/FoundryVTT-tabbed-chatlog/releases/download/latest/module.json",
+  "download": "https://github.com/cswendrowski/FoundryVTT-tabbed-chatlog/releases/download/latest/module.zip"
+}
