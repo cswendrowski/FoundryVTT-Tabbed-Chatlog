@@ -4,7 +4,7 @@
 
 # Tabbed Chatlog
 
-Splits up the chat into smaller tabs
+Splits the Chatlog into In Character (per scene), Rolls (per scene), and Out of Character (global).
 
 ![](./tabbed-chatlog.gif)
 
