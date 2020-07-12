@@ -135,7 +135,7 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
     }
   }
 
-  if (chatMessage.data.type == 5) {
+  if (chatMessage.data.type == 0 || chatMessage.data.type == 5) {
     if (currentTab != "rolls" && sceneMatches) {
       $("#rollsNotification").show();
     }
