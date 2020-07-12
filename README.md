@@ -12,3 +12,7 @@ Splits the Chatlog into In Character (per scene), Rolls (per scene), and Out of 
 
 ## Changelog
 
+### v1.1.0
+
+Added notifications for new messages in inactive tabs.
+Fixed new messages showing up incorrectly.

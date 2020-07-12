@@ -17,8 +17,11 @@ Hooks.on("renderChatLog", async function(chatLog, html, user) {
   console.log(html);
   console.log(user);
 
-  //html.prepend('<section class="tabbedchatlog content"><div class="tab" data-tab="tab1">Content 1</div><div class="tab" data-tab="tab2">Content 2</div></section>');
-  html.prepend('<nav class="tabbedchatlog tabs"><a class="item ic" data-tab="ic">In Character</a><a class="item rolls" data-tab="rolls">Rolls</a><a class="item ooc" data-tab="ooc">OOC</a></nav>');
+  var toPrepend = '<nav class="tabbedchatlog tabs">';
+  toPrepend += '<a class="item ic" data-tab="ic">In Character</a><i id="icNotification" class="notification-pip fas fa-exclamation-circle" style="display: none;"></i>'
+  toPrepend += '<a class="item rolls" data-tab="rolls">Rolls</a><i id="rollsNotification" class="notification-pip fas fa-exclamation-circle" style="display: none;"></i>';
+  toPrepend += '<a class="item ooc" data-tab="ooc">OOC</a></nav><i id="oocNotification" class="notification-pip fas fa-exclamation-circle" style="display: none;"></i>';
+  html.prepend(toPrepend);
 
   var me = this;
   const tabs = new TabsV2({ 
@@ -36,7 +39,10 @@ Hooks.on("renderChatLog", async function(chatLog, html, user) {
         $(".type2").hide();
         $(".type3").hide();
         $(".type4").hide();
+        $(".type5").removeClass("hardHide");
         $(".type5").show();
+
+        $("#rollsNotification").hide();
       }
       else if (tab == "ic") {
         $(".type0").hide();
@@ -46,15 +52,19 @@ Hooks.on("renderChatLog", async function(chatLog, html, user) {
         $(".type4").hide();
         $(".type5").hide();
 
-        console.log("Showing messages for " + game.user.viewedScene);
+        $("#icNotification").hide();
       }
       else if (tab == "ooc") {
         $(".type0").hide();
+        $(".type1").removeClass("hardHide");
         $(".type1").show();
         $(".type2").hide();
         $(".type3").hide();
-        $(".type4").hide();
+        $(".type3").removeClass("hardHide");
+        $(".type4").show();
         $(".type5").hide();
+
+        $("#oocNotification").hide();
       }
       else {
         console.log("Unknown tab " + tab + "!");
@@ -74,15 +84,71 @@ Hooks.on("renderChatMessage", (chatMessage, html, data) => {
 
   html.addClass("type" + data.message.type);
 
+  var sceneMatches = true;
+
   if (data.message.type == 0 || data.message.type == 2 || data.message.type == 3 || data.message.type == 5) {
     if (data.message.speaker.scene != undefined) {
       html.addClass("scenespecific");
       html.addClass("scene" + data.message.speaker.scene);
+      if (data.message.speaker.scene != game.user.viewedScene) {
+        sceneMatches = false;
+      }
     }
   }
 
-  if (currentTab == "ooc") {
-    html.css("display", "list-item");
+  if (currentTab == "rolls") {
+    if (data.message.type == 5 && sceneMatches)
+    {
+      html.css("display", "list-item");
+    }
+    else {
+      html.css("display", "none");
+    }
+  }
+  else if (currentTab == "ic") {
+    if ((data.message.type == 2 || data.message.type == 3) && sceneMatches)
+    {
+      html.css("display", "list-item");
+    }
+    else {
+      html.css("cssText", "display: none !important;");
+      html.addClass("hardHide");
+    }
+  }
+  else if (currentTab == "ooc") {
+    if (data.message.type == 1 || data.message.type == 4)
+    {
+      html.css("display", "list-item");
+    }
+    else {
+      html.css("display", "none");
+    }
+  }
+});
+
+Hooks.on("createChatMessage", (chatMessage, content) => {
+  var sceneMatches = true;
+
+  if (chatMessage.data.speaker.scene) {
+    if (chatMessage.data.speaker.scene != game.user.viewedScene) {
+      sceneMatches = false;
+    }
+  }
+
+  if (chatMessage.data.type == 5) {
+    if (currentTab != "rolls" && sceneMatches) {
+      $("#rollsNotification").show();
+    }
+  }
+  else if (chatMessage.data.type == 2 || chatMessage.data.type == 3) {
+    if (currentTab != "ic" && sceneMatches) { 
+      $("#icNotification").show();
+    }
+  }
+  else {
+    if (currentTab != "ooc") { 
+      $("#oocNotification").show();
+    }
   }
 });
 

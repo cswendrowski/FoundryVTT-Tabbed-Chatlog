@@ -24,6 +24,29 @@
     display: none;
 }
 
+.type4 {
+    display: none;
+}
+
 .type5 {
     display: none;
+}
+
+.hardHide {
+    display: none !important;
+}
+
+#icNotification {
+    top: 35px;
+    right: 196px;
+}
+
+#oocNotification {
+    top: 35px;
+    right: -3px;
+}
+
+#rollsNotification {
+    top: 35px;
+    right: 92px;
 }
