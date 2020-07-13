@@ -34,6 +34,7 @@ Hooks.on("renderChatLog", async function(chatLog, html, user) {
       currentTab = tab;
 
       if (tab == "rolls") {
+        $(".type0").removeClass("hardHide");
         $(".type0").show();
         $(".type1").hide();
         $(".type2").hide();
@@ -97,7 +98,7 @@ Hooks.on("renderChatMessage", (chatMessage, html, data) => {
   }
 
   if (currentTab == "rolls") {
-    if (data.message.type == 5 && sceneMatches)
+    if ((chatMessage.data.type == 0 || data.message.type == 5) && sceneMatches)
     {
       html.css("display", "list-item");
     }
