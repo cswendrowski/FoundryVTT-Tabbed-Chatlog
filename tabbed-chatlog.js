@@ -61,7 +61,7 @@ Hooks.on("renderChatLog", async function(chatLog, html, user) {
         $(".type1").show();
         $(".type2").hide();
         $(".type3").hide();
-        $(".type3").removeClass("hardHide");
+        $(".type4").removeClass("hardHide");
         $(".type4").show();
         $(".type5").hide();
 
@@ -70,6 +70,8 @@ Hooks.on("renderChatLog", async function(chatLog, html, user) {
       else {
         console.log("Unknown tab " + tab + "!");
       }
+
+      $("#chat-log").scrollTop(9999999);
     } 
   });
   console.log(html[0]);
