@@ -48,7 +48,9 @@ Hooks.on("renderChatLog", async function(chatLog, html, user) {
       else if (tab == "ic") {
         $(".type0").hide();
         $(".type1").hide();
+        $(".type2.scene" + game.user.viewedScene).removeClass("hardHide");
         $(".type2.scene" + game.user.viewedScene).show();
+        $(".type3.scene" + game.user.viewedScene).removeClass("hardHide");
         $(".type3.scene" + game.user.viewedScene).show();
         $(".type4").hide();
         $(".type5").hide();
@@ -164,11 +166,15 @@ Hooks.on("renderSceneNavigation", (sceneNav, html, data) => {
   
   $(".scenespecific").hide();
   if (currentTab == "rolls") {
+    $(".type0.scene" + game.user.viewedScene).removeClass("hardHide");
     $(".type0.scene" + viewedScene.id).show();
+    $(".type5.scene" + game.user.viewedScene).removeClass("hardHide");
     $(".type5.scene" + viewedScene.id).show();
   }
   else if (currentTab == "ic") {
+    $(".type2.scene" + game.user.viewedScene).removeClass("hardHide");
     $(".type2.scene" + viewedScene.id).show();
+    $(".type3.scene" + game.user.viewedScene).removeClass("hardHide");
     $(".type3.scene" + viewedScene.id).show();
   }
 });
