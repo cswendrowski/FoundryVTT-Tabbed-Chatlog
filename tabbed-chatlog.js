@@ -71,6 +71,7 @@ Hooks.on("renderChatLog", async function(chatLog, html, user) {
         console.log("Unknown tab " + tab + "!");
       }
 
+      console.log("Scrollin");
       $("#chat-log").scrollTop(9999999);
     } 
   });
