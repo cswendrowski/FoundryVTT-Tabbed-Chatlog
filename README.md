@@ -16,3 +16,7 @@ Splits the Chatlog into In Character (per scene), Rolls (per scene), and Out of 
 
 Added notifications for new messages in inactive tabs.
 Fixed new messages showing up incorrectly.
+
+### v1.2.0
+
+In Character messages without a scene attached will now show on the IC tab when toggled

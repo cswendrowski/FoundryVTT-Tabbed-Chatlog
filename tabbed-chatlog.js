@@ -50,8 +50,10 @@ Hooks.on("renderChatLog", async function(chatLog, html, user) {
         $(".type1").hide();
         $(".type2.scene" + game.user.viewedScene).removeClass("hardHide");
         $(".type2.scene" + game.user.viewedScene).show();
+        $(".type2").not(".scenespecific").show();
         $(".type3.scene" + game.user.viewedScene).removeClass("hardHide");
         $(".type3.scene" + game.user.viewedScene).show();
+        $(".type3").not(".scenespecific").show();
         $(".type4").hide();
         $(".type5").hide();
 
