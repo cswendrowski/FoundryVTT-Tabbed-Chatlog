@@ -1,0 +1,13 @@
+{
+    "TC.SETTINGS.OocWebhookName": "Discord Webhook for Out of Character chat",
+    "TC.SETTINGS.OocWebhookHint": "OOC Chat is always global and never scene specific",
+    "TC.SETTINGS.IcFallbackWebhookName": "Discord Webhook for In Character chat for a scene without a webhook registered",
+    "TC.SETTINGS.IcFallbackWebhookHint": "If you do not want per-scene webhooks, just set this and move on",
+
+    "TC.SETTINGS.IcSceneWebhookName": "Discord Webhook for In Character chat for this scene",
+    "TC.SETTINGS.IcSceneWebhookHint": "https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks",
+
+    "TC.TABS.IC": "In Character",
+    "TC.TABS.OOC": "OOC",
+    "TC.TABS.Rolls": "Rolls"
+}

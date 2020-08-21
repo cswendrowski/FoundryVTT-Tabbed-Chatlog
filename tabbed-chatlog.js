@@ -12,15 +12,11 @@ const CHAT_MESSAGE_TYPES = {
 let currentTab = "ic";
 
 Hooks.on("renderChatLog", async function(chatLog, html, user) {
-  console.log("tabbed chatlog");
-  console.log(chatLog);
-  console.log(html);
-  console.log(user);
 
   var toPrepend = '<nav class="tabbedchatlog tabs">';
-  toPrepend += '<a class="item ic" data-tab="ic">In Character</a><i id="icNotification" class="notification-pip fas fa-exclamation-circle" style="display: none;"></i>'
-  toPrepend += '<a class="item rolls" data-tab="rolls">Rolls</a><i id="rollsNotification" class="notification-pip fas fa-exclamation-circle" style="display: none;"></i>';
-  toPrepend += '<a class="item ooc" data-tab="ooc">OOC</a></nav><i id="oocNotification" class="notification-pip fas fa-exclamation-circle" style="display: none;"></i>';
+  toPrepend += `<a class="item ic" data-tab="ic">${game.i18n.localize("TC.TABS.IC")}</a><i id="icNotification" class="notification-pip fas fa-exclamation-circle" style="display: none;"></i>`;
+  toPrepend += `<a class="item rolls" data-tab="rolls">${game.i18n.localize("TC.TABS.Rolls")}</a><i id="rollsNotification" class="notification-pip fas fa-exclamation-circle" style="display: none;"></i>`;
+  toPrepend += `<a class="item ooc" data-tab="ooc">${game.i18n.localize("TC.TABS.OOC")}</a></nav><i id="oocNotification" class="notification-pip fas fa-exclamation-circle" style="display: none;"></i>`;
   html.prepend(toPrepend);
 
   var me = this;
@@ -29,8 +25,6 @@ Hooks.on("renderChatLog", async function(chatLog, html, user) {
     contentSelector: ".content", 
     initial: "tab1", 
     callback: function(event, html, tab) { 
-      console.log("Tab callback");
-      console.log(tab);
       currentTab = tab;
 
       if (tab == "rolls") {
@@ -75,21 +69,13 @@ Hooks.on("renderChatLog", async function(chatLog, html, user) {
         console.log("Unknown tab " + tab + "!");
       }
 
-      console.log("Scrollin");
       $("#chat-log").scrollTop(9999999);
     } 
   });
-  console.log(html[0]);
   tabs.bind(html[0]);
-
-  console.log(tabs);
 });
 
 Hooks.on("renderChatMessage", (chatMessage, html, data) => {
-  console.log(chatMessage);
-  console.log(html);
-  console.log(data)
-
   html.addClass("type" + data.message.type);
 
   var sceneMatches = true;
@@ -137,7 +123,8 @@ Hooks.on("renderChatMessage", (chatMessage, html, data) => {
 Hooks.on("createChatMessage", (chatMessage, content) => {
   var sceneMatches = true;
 
-  if (chatMessage.data.speaker.scene) {
+  if (chatMessage.data.speaker.scene)
+  {
     if (chatMessage.data.speaker.scene != game.user.viewedScene) {
       sceneMatches = false;
     }
@@ -148,24 +135,107 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
       $("#rollsNotification").show();
     }
   }
-  else if (chatMessage.data.type == 2 || chatMessage.data.type == 3) {
-    if (currentTab != "ic" && sceneMatches) { 
+  else if (chatMessage.data.type == 2 || chatMessage.data.type == 3)
+  {
+    if (currentTab != "ic" && sceneMatches)
+    { 
       $("#icNotification").show();
     }
+    try
+    {
+      let scene = game.scenes.get(chatMessage.data.speaker.scene);
+      let webhook = scene.getFlag("tabbed-chatlog", "webhook");
+      
+      if (webhook == undefined || webhook == "") {
+        webhook = game.settings.get("tabbed-chatlog", "icBackupWebhook");
+      }
+
+      if (webhook == undefined || webhook == "") {
+        return;
+      }
+
+      let speaker = chatMessage.data.speaker
+      var actor = loadActorForChatMessage(speaker);
+      let img = "";
+      if (actor) {
+          img = generatePortraitImageElement(actor)
+      }
+      else {
+          img = chatMessage.user.avatar;
+      }
+
+      img = game.data.addresses.remote + "/" + img;
+
+      fetch(webhook, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            content: chatMessage.data.content,
+            username: actor.name,
+            avatar_url: img
+        })
+      });
+    }
+    catch {}
   }
-  else {
+  else
+  {
     if (currentTab != "ooc") { 
       $("#oocNotification").show();
     }
+
+    try
+    {
+      let webhook = game.settings.get("tabbed-chatlog", "oocWebhook");
+
+      if (webhook == undefined || webhook == "") {
+        return;
+      }
+
+      let img = chatMessage.user.avatar;
+      img = game.data.addresses.remote + "/" + img;
+
+      fetch(webhook, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            content: chatMessage.data.content,
+            username: chatMessage.user.name,
+            avatar_url: img
+        })
+      });
+    }
+    catch {}
   }
 });
 
-Hooks.on("renderSceneNavigation", (sceneNav, html, data) => {
-  console.log(sceneNav);
-  console.log(data);
-  var viewedScene = sceneNav.scenes.find(x => x.isView);
-  console.log("Navigated to scene " + viewedScene.id);
+function loadActorForChatMessage(speaker) {
+  var actor;
+  if (speaker.token) {
+      actor = game.actors.tokens[speaker.token];
+  }
+  if (!actor) {
+      actor = game.actors.get((speaker.actor));
+  }
+  if (!actor) {
+      game.actors.forEach((value) => {
+      if (value.name === speaker.alias) {
+          actor = value;
+      }
+      });
+  }
+  return actor;
+}
   
+function generatePortraitImageElement(actor) {
+    let img = "";
+    img = actor.token ? actor.token.data.img : actor.data.token.img;
+    return img;
+  }
+
+Hooks.on("renderSceneNavigation", (sceneNav, html, data) => {
+  var viewedScene = sceneNav.scenes.find(x => x.isView);
+ 
   $(".scenespecific").hide();
   if (currentTab == "rolls") {
     $(".type0.scene" + game.user.viewedScene).removeClass("hardHide");
@@ -179,4 +249,64 @@ Hooks.on("renderSceneNavigation", (sceneNav, html, data) => {
     $(".type3.scene" + game.user.viewedScene).removeClass("hardHide");
     $(".type3.scene" + viewedScene.id).show();
   }
+});
+
+
+Hooks.on("renderSceneConfig", (app, html, data) => {
+  let loadedWebhookData = undefined;
+
+    if(app.object.data.flags["tabbed-chatlog"])
+    {
+      if (app.object.data.flags["tabbed-chatlog"].webhook)
+      {
+        loadedWebhookData = app.object.getFlag('tabbed-chatlog', 'webhook');
+      }
+      else
+      {
+        app.object.setFlag('tabbed-chatlog', 'webhook', "");
+        loadedWebhookData = "";
+      }
+    }
+    else
+    {
+      app.object.setFlag('tabbed-chatlog', 'webhook', "");
+      loadedWebhookData = "";
+    }
+
+  const fxHtml = `
+  <div class="form-group">
+      <label>${game.i18n.localize("TC.SETTINGS.IcSceneWebhookName")}</label>
+      <input id="scenewebhook" type="text" name="scenewebhook" value="${loadedWebhookData}" placeholder="Webhook"}>
+      <p class="notes">${game.i18n.localize("TC.SETTINGS.IcSceneWebhookHint")}</p>
+  </div>
+  `
+  const fxFind = html.find("select[name ='journal']");
+  const formGroup = fxFind.closest(".form-group");
+  formGroup.after(fxHtml);
+});
+
+
+Hooks.on("closeSceneConfig", (app, html, data) => {
+  app.object.setFlag('tabbed-chatlog', 'webhook', html.find("input[name ='scenewebhook']")[0].value);
+});
+
+Hooks.on('init', () => {
+
+  game.settings.register('tabbed-chatlog', 'oocWebhook', {
+    name: game.i18n.localize("TC.SETTINGS.OocWebhookName"),
+    hint: game.i18n.localize("TC.SETTINGS.OocWebhookHint"),
+    scope: 'world',
+    config: true,
+    default: '',
+    type: String,
+  });
+
+  game.settings.register('tabbed-chatlog', 'icBackupWebhook', {
+    name: game.i18n.localize("TC.SETTINGS.IcFallbackWebhookName"),
+    hint: game.i18n.localize("TC.SETTINGS.IcFallbackWebhookHint"),
+    scope: 'world',
+    config: true,
+    default: '',
+    type: String,
+  });
 });
