@@ -166,14 +166,17 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
 
       img = game.data.addresses.remote + "/" + img;
 
-      fetch(webhook, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            content: chatMessage.data.content,
-            username: actor.name,
-            avatar_url: img
-        })
+      $.ajax({
+        type: 'POST',
+        url: webhook,
+        data: JSON.stringify({
+          content: chatMessage.data.content,
+          username: actor.name,
+          avatar_url: img
+        }),
+        success: function(data) {},
+        contentType: "application/json",
+        dataType: 'json'
       });
     }
     catch {}
@@ -195,14 +198,18 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
       let img = chatMessage.user.avatar;
       img = game.data.addresses.remote + "/" + img;
 
-      fetch(webhook, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            content: chatMessage.data.content,
-            username: chatMessage.user.name,
-            avatar_url: img
-        })
+
+      $.ajax({
+        type: 'POST',
+        url: webhook,
+        data: JSON.stringify({
+          content: chatMessage.data.content,
+          username: chatMessage.user.name,
+          avatar_url: img
+        }),
+        success: function(data) {},
+        contentType: "application/json",
+        dataType: 'json'
       });
     }
     catch {}
