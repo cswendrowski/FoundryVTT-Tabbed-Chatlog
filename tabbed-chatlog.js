@@ -166,17 +166,10 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
 
       img = game.data.addresses.remote + "/" + img;
 
-      $.ajax({
-        type: 'POST',
-        url: webhook,
-        data: JSON.stringify({
-          content: chatMessage.data.content,
-          username: actor.name,
-          avatar_url: img
-        }),
-        success: function(data) {},
-        contentType: "application/json",
-        dataType: 'json'
+      sendToDiscord({
+        content: chatMessage.data.content,
+        username: actor.name,
+        avatar_url: img
       });
     }
     catch {}
@@ -199,22 +192,93 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
       img = game.data.addresses.remote + "/" + img;
 
 
-      $.ajax({
-        type: 'POST',
-        url: webhook,
-        data: JSON.stringify({
-          content: chatMessage.data.content,
-          username: chatMessage.user.name,
-          avatar_url: img
-        }),
-        success: function(data) {},
-        contentType: "application/json",
-        dataType: 'json'
+      sendToDiscord({
+        content: chatMessage.data.content,
+        username: chatMessage.user.name,
+        avatar_url: img
       });
     }
     catch {}
   }
 });
+
+Hooks.on("preCreateChatMessage", (chatMessage, content) => {
+  if (chatMessage.type == 0 || chatMessage.type == 5) {
+
+  }
+  else if (chatMessage.type == 2 || chatMessage.type == 3)
+  {
+    try
+    {
+      let scene = game.scenes.get(chatMessage.speaker.scene);
+      let webhook = scene.getFlag("tabbed-chatlog", "webhook");
+      
+      if (webhook == undefined || webhook == "") {
+        webhook = game.settings.get("tabbed-chatlog", "icBackupWebhook");
+      }
+
+      if (webhook == undefined || webhook == "") {
+        return;
+      }
+
+      let speaker = chatMessage.speaker
+      var actor = loadActorForChatMessage(speaker);
+      let img = "";
+      if (actor) {
+          img = generatePortraitImageElement(actor)
+      }
+      else {
+          img = game.users.get(chatMessage.user).avatar;
+      }
+
+      img = game.data.addresses.remote + "/" + img;
+
+      sendToDiscord(webhook, {
+        content: chatMessage.content,
+        username: actor.name,
+        avatar_url: img
+      });
+    }
+    catch (error) {
+      console.log(error);
+    }
+  }
+  else
+  {
+    try
+    {
+      let webhook = game.settings.get("tabbed-chatlog", "oocWebhook");
+
+      if (webhook == undefined || webhook == "") {
+        return;
+      }
+
+      let img = game.users.get(chatMessage.user).avatar;
+      img = game.data.addresses.remote + "/" + img;
+
+
+      sendToDiscord(webhook, {
+        content: chatMessage.content,
+        username: game.users.get(chatMessage.user).name,
+        avatar_url: img
+      });
+    }
+    catch (error) {
+      console.log(error);
+    }
+  }
+});
+
+function sendToDiscord(webhook, body) {
+  $.ajax({
+    type: 'POST',
+    url: webhook,
+    data: JSON.stringify(body),
+    success: function(data) {},
+    contentType: "application/json",
+    dataType: 'json'
+  });
+}
 
 function loadActorForChatMessage(speaker) {
   var actor;
