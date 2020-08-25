@@ -35,7 +35,7 @@ Hooks.on("renderChatLog", async function(chatLog, html, user) {
         $(".type3").hide();
         $(".type4").hide();
         $(".type5").removeClass("hardHide");
-        $(".type5").show();
+        $(".type5").not(".gm-roll-hidden").show();
 
         $("#rollsNotification").hide();
       }
@@ -93,6 +93,8 @@ Hooks.on("renderChatMessage", (chatMessage, html, data) => {
   if (currentTab == "rolls") {
     if ((chatMessage.data.type == 0 || data.message.type == 5) && sceneMatches)
     {
+      console.log(chatMessage);
+      console.log(game.settings.get('hide-gm-rolls', 'hide-private-rolls'));
       html.css("display", "list-item");
     }
     else {
@@ -312,7 +314,7 @@ Hooks.on("renderSceneNavigation", (sceneNav, html, data) => {
     $(".type0.scene" + game.user.viewedScene).removeClass("hardHide");
     $(".type0.scene" + viewedScene.id).show();
     $(".type5.scene" + game.user.viewedScene).removeClass("hardHide");
-    $(".type5.scene" + viewedScene.id).show();
+    $(".type5.scene" + viewedScene.id).not(".gm-roll-hidden").show();
   }
   else if (currentTab == "ic") {
     $(".type2.scene" + game.user.viewedScene).removeClass("hardHide");
