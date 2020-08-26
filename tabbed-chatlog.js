@@ -175,12 +175,6 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
       }
 
       img = game.data.addresses.remote + "/" + img;
-
-      sendToDiscord({
-        content: chatMessage.data.content,
-        username: actor.name,
-        avatar_url: img
-      });
     }
     catch {}
   }
@@ -200,13 +194,6 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
 
       let img = chatMessage.user.avatar;
       img = game.data.addresses.remote + "/" + img;
-
-
-      sendToDiscord({
-        content: chatMessage.data.content,
-        username: chatMessage.user.name,
-        avatar_url: img
-      });
     }
     catch {}
   }
@@ -243,11 +230,13 @@ Hooks.on("preCreateChatMessage", (chatMessage, content) => {
 
       img = game.data.addresses.remote + "/" + img;
 
-      sendToDiscord(webhook, {
-        content: chatMessage.content,
-        username: actor.name,
-        avatar_url: img
-      });
+      if (!chatMessage.whisper) {
+        sendToDiscord(webhook, {
+          content: chatMessage.content,
+          username: actor.name,
+          avatar_url: img
+        });
+      }
     }
     catch (error) {
       console.log(error);
@@ -266,12 +255,13 @@ Hooks.on("preCreateChatMessage", (chatMessage, content) => {
       let img = game.users.get(chatMessage.user).avatar;
       img = game.data.addresses.remote + "/" + img;
 
-
-      sendToDiscord(webhook, {
-        content: chatMessage.content,
-        username: game.users.get(chatMessage.user).name,
-        avatar_url: img
-      });
+      if (!chatMessage.whisper) {
+        sendToDiscord(webhook, {
+          content: chatMessage.content,
+          username: game.users.get(chatMessage.user).name,
+          avatar_url: img
+        });
+      }
     }
     catch (error) {
       console.log(error);
