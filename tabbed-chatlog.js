@@ -91,11 +91,14 @@ Hooks.on("renderChatMessage", (chatMessage, html, data) => {
   }
 
   if (currentTab == "rolls") {
-    if ((chatMessage.data.type == 0 || data.message.type == 5) && sceneMatches)
+    if (chatMessage.data.type == 0 && sceneMatches)
     {
-      console.log(chatMessage);
-      console.log(game.settings.get('hide-gm-rolls', 'hide-private-rolls'));
       html.css("display", "list-item");
+    }
+    else if (data.message.type == 5 && sceneMatches) {
+      if (!html.hasClass('gm-roll-hidden')) {
+        html.css("display", "list-item");
+      }
     }
     else {
       html.css("display", "none");
@@ -132,8 +135,13 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
     }
   }
 
-  if (chatMessage.data.type == 0 || chatMessage.data.type == 5) {
+  if (chatMessage.data.type == 0) {
     if (currentTab != "rolls" && sceneMatches) {
+      $("#rollsNotification").show();
+    }
+  }
+  else if (chatMessage.data.type == 5) {
+    if (currentTab != "rolls" && sceneMatches && chatMessage.data.whisper.length == 0) {
       $("#rollsNotification").show();
     }
   }
