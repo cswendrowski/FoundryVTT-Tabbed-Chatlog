@@ -230,7 +230,7 @@ Hooks.on("preCreateChatMessage", (chatMessage, content) => {
 
       img = game.data.addresses.remote + "/" + img;
 
-      if (!chatMessage.whisper) {
+      if (!chatMessage.whisper?.length) {
         sendToDiscord(webhook, {
           content: chatMessage.content,
           username: actor.name,
@@ -255,7 +255,7 @@ Hooks.on("preCreateChatMessage", (chatMessage, content) => {
       let img = game.users.get(chatMessage.user).avatar;
       img = game.data.addresses.remote + "/" + img;
 
-      if (!chatMessage.whisper) {
+      if (!chatMessage.whisper?.length) {
         sendToDiscord(webhook, {
           content: chatMessage.content,
           username: game.users.get(chatMessage.user).name,
