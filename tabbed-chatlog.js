@@ -10,6 +10,8 @@ const CHAT_MESSAGE_TYPES = {
 };
 
 let currentTab = "ic";
+let salonEnabled = false;
+
 
 Hooks.on("renderChatLog", async function(chatLog, html, user) {
 
@@ -49,7 +51,10 @@ Hooks.on("renderChatLog", async function(chatLog, html, user) {
         $(".type3.scene" + game.user.viewedScene).show();
         $(".type3").not(".scenespecific").show();
         $(".type4").hide();
-        $(".type5").hide();
+
+        if (!salonEnabled) {
+          $(".type5").hide();
+        }
 
         $("#icNotification").hide();
       }
@@ -61,7 +66,9 @@ Hooks.on("renderChatLog", async function(chatLog, html, user) {
         $(".type3").hide();
         $(".type4").removeClass("hardHide");
         $(".type4").show();
-        $(".type5").hide();
+        if (!salonEnabled) {
+          $(".type5").hide();
+        }
 
         $("#oocNotification").hide();
       }
@@ -88,6 +95,13 @@ Hooks.on("renderChatMessage", (chatMessage, html, data) => {
         sceneMatches = false;
       }
     }
+  }
+
+  if (salonEnabled && chatMessage.data.type == 5) {
+    if (!html.hasClass('gm-roll-hidden')) {
+      html.css("display", "list-item");
+    }
+    return;
   }
 
   if (currentTab == "rolls") {
@@ -151,51 +165,12 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
     { 
       $("#icNotification").show();
     }
-    try
-    {
-      let scene = game.scenes.get(chatMessage.data.speaker.scene);
-      let webhook = scene.getFlag("tabbed-chatlog", "webhook");
-      
-      if (webhook == undefined || webhook == "") {
-        webhook = game.settings.get("tabbed-chatlog", "icBackupWebhook");
-      }
-
-      if (webhook == undefined || webhook == "") {
-        return;
-      }
-
-      let speaker = chatMessage.data.speaker
-      var actor = loadActorForChatMessage(speaker);
-      let img = "";
-      if (actor) {
-          img = generatePortraitImageElement(actor)
-      }
-      else {
-          img = chatMessage.user.avatar;
-      }
-
-      img = game.data.addresses.remote + "/" + img;
-    }
-    catch {}
   }
   else
   {
     if (currentTab != "ooc") { 
       $("#oocNotification").show();
     }
-
-    try
-    {
-      let webhook = game.settings.get("tabbed-chatlog", "oocWebhook");
-
-      if (webhook == undefined || webhook == "") {
-        return;
-      }
-
-      let img = chatMessage.user.avatar;
-      img = game.data.addresses.remote + "/" + img;
-    }
-    catch {}
   }
 });
 
@@ -320,6 +295,8 @@ Hooks.on("renderSceneNavigation", (sceneNav, html, data) => {
     $(".type3.scene" + game.user.viewedScene).removeClass("hardHide");
     $(".type3.scene" + viewedScene.id).show();
   }
+
+  canvas.pan({ x: canvas.dimensions.width / 2, y: canvas.dimensions.height / 2, scale: 1 - (canvas.dimensions.sceneHeight / canvas.dimensions.height) });
 });
 
 
@@ -380,4 +357,6 @@ Hooks.on('init', () => {
     default: '',
     type: String,
   });
+
+  salonEnabled = game.data.modules.find(x => x.id == "salon")?.active;
 });
