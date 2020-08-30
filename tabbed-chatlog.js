@@ -295,8 +295,6 @@ Hooks.on("renderSceneNavigation", (sceneNav, html, data) => {
     $(".type3.scene" + game.user.viewedScene).removeClass("hardHide");
     $(".type3.scene" + viewedScene.id).show();
   }
-
-  canvas.pan({ x: canvas.dimensions.width / 2, y: canvas.dimensions.height / 2, scale: 1 - (canvas.dimensions.sceneHeight / canvas.dimensions.height) });
 });
 
 
