@@ -175,6 +175,16 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
 });
 
 Hooks.on("preCreateChatMessage", (chatMessage, content) => {
+
+  if (game.settings.get('tabbed-chatlog', 'icChatInOoc'))
+  {
+    if (currentTab == "ooc") {
+      if (chatMessage.type == 2) {
+        chatMessage.type = 1;
+      }
+    }
+  }
+
   if (chatMessage.type == 0 || chatMessage.type == 5) {
 
   }
@@ -301,23 +311,25 @@ Hooks.on("renderSceneNavigation", (sceneNav, html, data) => {
 Hooks.on("renderSceneConfig", (app, html, data) => {
   let loadedWebhookData = undefined;
 
-    if(app.object.data.flags["tabbed-chatlog"])
+  if (app.object.compendium) return;
+
+  if(app.object.data.flags["tabbed-chatlog"])
+  {
+    if (app.object.data.flags["tabbed-chatlog"].webhook)
     {
-      if (app.object.data.flags["tabbed-chatlog"].webhook)
-      {
-        loadedWebhookData = app.object.getFlag('tabbed-chatlog', 'webhook');
-      }
-      else
-      {
-        app.object.setFlag('tabbed-chatlog', 'webhook', "");
-        loadedWebhookData = "";
-      }
+      loadedWebhookData = app.object.getFlag('tabbed-chatlog', 'webhook');
     }
     else
     {
       app.object.setFlag('tabbed-chatlog', 'webhook', "");
       loadedWebhookData = "";
     }
+  }
+  else
+  {
+    app.object.setFlag('tabbed-chatlog', 'webhook', "");
+    loadedWebhookData = "";
+  }
 
   const fxHtml = `
   <div class="form-group">
@@ -333,6 +345,8 @@ Hooks.on("renderSceneConfig", (app, html, data) => {
 
 
 Hooks.on("closeSceneConfig", (app, html, data) => {
+  if (app.object.compendium) return;
+  
   app.object.setFlag('tabbed-chatlog', 'webhook', html.find("input[name ='scenewebhook']")[0].value);
 });
 
@@ -354,6 +368,15 @@ Hooks.on('init', () => {
     config: true,
     default: '',
     type: String,
+  });
+
+  game.settings.register('tabbed-chatlog', 'icChatInOoc', {
+    name: game.i18n.localize("TC.SETTINGS.IcChatInOocName"),
+    hint: game.i18n.localize("TC.SETTINGS.IcChatInOocHint"),
+    scope: 'world',
+    config: true,
+    default: true,
+    type: Boolean,
   });
 
   salonEnabled = game.data.modules.find(x => x.id == "salon")?.active;
