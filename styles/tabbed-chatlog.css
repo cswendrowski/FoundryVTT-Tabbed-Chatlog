@@ -10,6 +10,7 @@
     border: 1px solid red;
     border-bottom: none;
     box-shadow: 0 0 6px inset #ff6400;
+    border-radius: 5px 5px 0 0;
 }
 
 .tabbedchatlog .item {
@@ -43,10 +44,10 @@
 
 #oocNotification {
     top: 35px;
-    right: -3px;
+    right: 20px;
 }
 
 #rollsNotification {
     top: 35px;
-    right: 92px;
+    right: 118px;
 }
