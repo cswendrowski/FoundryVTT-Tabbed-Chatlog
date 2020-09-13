@@ -207,11 +207,14 @@ Hooks.on("preCreateChatMessage", (chatMessage, content) => {
       let speaker = chatMessage.speaker
       var actor = loadActorForChatMessage(speaker);
       let img = "";
+      let name = "";
       if (actor) {
-          img = generatePortraitImageElement(actor)
+          img = generatePortraitImageElement(actor);
+          name = actor.name;
       }
       else {
           img = game.users.get(chatMessage.user).avatar;
+          name = speaker.alias;
       }
 
       img = game.data.addresses.remote + "/" + img;
@@ -219,7 +222,7 @@ Hooks.on("preCreateChatMessage", (chatMessage, content) => {
       if (!chatMessage.whisper?.length) {
         sendToDiscord(webhook, {
           content: turndown.turndown(chatMessage.content),
-          username: actor.name,
+          username: name,
           avatar_url: img
         });
       }
