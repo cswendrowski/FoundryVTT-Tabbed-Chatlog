@@ -65,9 +65,9 @@ Hooks.on("renderChatLog", async function(chatLog, html, user) {
         $(".type1").show();
         $(".type2").hide();
         $(".type3").hide();
-        $(".type4").removeClass("hardHide");
-        $(".type4").show();
         if (!salonEnabled) {
+          $(".type4").removeClass("hardHide");
+          $(".type4").show();
           $(".type5").hide();
         }
 
@@ -104,6 +104,8 @@ Hooks.on("renderChatMessage", (chatMessage, html, data) => {
     }
     return;
   }
+
+  if (salonEnabled && chatMessage.data.type == 4) return;
 
   if (currentTab == "rolls") {
     if (chatMessage.data.type == 0 && sceneMatches)
@@ -169,6 +171,8 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
   }
   else
   {
+    if (salonEnabled && chatMessage.data.type == 4) return;
+
     if (currentTab != "ooc") { 
       $("#oocNotification").show();
     }
