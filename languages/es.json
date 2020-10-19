@@ -1,0 +1,16 @@
+{
+    "TC.SETTINGS.OocWebhookName": "Webhook de Discord para los mensajes Como Jugador (en inglés, OOC, Out of Character)",
+    "TC.SETTINGS.OocWebhookHint": "Los Mensajes Como Jugador son siempre globales y no específicos de cada escena",
+    "TC.SETTINGS.IcFallbackWebhookName": "Webhook de Discord para los mensajes Como Personaje (en inglés, In Character) para una escena sin Webhook registrado",
+    "TC.SETTINGS.IcFallbackWebhookHint": "Si no quieres Webhooks por escena, activa esta opción",
+
+    "TC.SETTINGS.IcSceneWebhookName": "Webhook de Discord para los mensajes Como Personaje para esta escena",
+    "TC.SETTINGS.IcSceneWebhookHint": "https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks",
+
+    "TC.SETTINGS.IcChatInOocName": "Al estar en la pestaña Jugador, ¿deben ser convertidos los mensajes Como Personaje a Como Jugador?",
+    "TC.SETTINGS.IcChatInOocHint": "Es útil para aquellos jugadores que se les olvida usar /ooc",
+
+    "TC.TABS.IC": "Personaje",
+    "TC.TABS.OOC": "Jugador",
+    "TC.TABS.Rolls": "Tiradas"
+}
