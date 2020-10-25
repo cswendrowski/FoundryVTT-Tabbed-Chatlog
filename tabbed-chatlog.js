@@ -191,6 +191,7 @@ Hooks.on("preCreateChatMessage", (chatMessage, content) => {
     if (currentTab == "ooc") {
       if (chatMessage.type == 2) {
         chatMessage.type = 1;
+        delete(chatMessage.speaker);
       }
     }
   }
