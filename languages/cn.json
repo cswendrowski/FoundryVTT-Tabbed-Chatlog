@@ -1,0 +1,19 @@
+{
+    "TC.SETTINGS.OocWebhookName": "用于超游聊天的Discord Webhook",
+    "TC.SETTINGS.OocWebhookHint": "超游聊天始终发送到全局并且和场景无关",
+    "TC.SETTINGS.IcFallbackWebhookName": "未注册Webhook的用于场景内角色聊天的Discord Webhook",
+    "TC.SETTINGS.IcFallbackWebhookHint": "如果你不想对每个场景设置Webhook，设定该选项继续即可",
+
+    "TC.SETTINGS.IcSceneWebhookName": "用于该场景内角色聊天的Discord Webhook",
+    "TC.SETTINGS.IcSceneWebhookHint": "https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks",
+
+    "TC.SETTINGS.IcChatInOocName": "切在超游面板时，角色聊天自动转换成超游聊天吗？",
+    "TC.SETTINGS.IcChatInOocHint": "帮一哈忘记使用/ooc的玩家",
+
+    "TC.SETTINGS.HideInStreamViewName": "在FoundryVTT的/stream浏览模式下禁用Tabbed Chatlog？",
+    "TC.SETTINGS.HideInStreamViewHint": "默认禁用",
+
+    "TC.TABS.IC": "角色",
+    "TC.TABS.OOC": "超游",
+    "TC.TABS.Rolls": "掷骰"
+}
