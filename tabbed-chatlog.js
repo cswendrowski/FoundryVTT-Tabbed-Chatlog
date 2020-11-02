@@ -16,6 +16,8 @@ let turndown = undefined;
 
 Hooks.on("renderChatLog", async function(chatLog, html, user) {
 
+  if (shouldHideDueToStreamView()) return;
+
   var toPrepend = '<nav class="tabbedchatlog tabs">';
   toPrepend += `<a class="item ic" data-tab="ic">${game.i18n.localize("TC.TABS.IC")}</a><i id="icNotification" class="notification-pip fas fa-exclamation-circle" style="display: none;"></i>`;
   toPrepend += `<a class="item rolls" data-tab="rolls">${game.i18n.localize("TC.TABS.Rolls")}</a><i id="rollsNotification" class="notification-pip fas fa-exclamation-circle" style="display: none;"></i>`;
@@ -43,7 +45,6 @@ Hooks.on("renderChatLog", async function(chatLog, html, user) {
         $("#rollsNotification").hide();
       }
       else if (tab == "ic") {
-        $(".type0").hide();
         $(".type1").hide();
         $(".type2.scene" + game.user.viewedScene).removeClass("hardHide");
         $(".type2.scene" + game.user.viewedScene).show();
@@ -54,18 +55,20 @@ Hooks.on("renderChatLog", async function(chatLog, html, user) {
         $(".type4").hide();
 
         if (!salonEnabled) {
+          $(".type0").hide();
           $(".type5").hide();
         }
 
         $("#icNotification").hide();
       }
       else if (tab == "ooc") {
-        $(".type0").hide();
         $(".type1").removeClass("hardHide");
         $(".type1").show();
         $(".type2").hide();
         $(".type3").hide();
+        
         if (!salonEnabled) {
+          $(".type0").hide();
           $(".type4").removeClass("hardHide");
           $(".type4").show();
           $(".type5").hide();
@@ -84,6 +87,9 @@ Hooks.on("renderChatLog", async function(chatLog, html, user) {
 });
 
 Hooks.on("renderChatMessage", (chatMessage, html, data) => {
+
+  if (shouldHideDueToStreamView()) return;
+
   html.addClass("type" + data.message.type);
 
   var sceneMatches = true;
@@ -186,6 +192,8 @@ Hooks.on("preCreateChatMessage", (chatMessage, content) => {
     if (currentTab == "ooc") {
       if (chatMessage.type == 2) {
         chatMessage.type = 1;
+        delete(chatMessage.speaker);
+        console.log(chatMessage);
       }
     }
   }
@@ -298,6 +306,9 @@ function generatePortraitImageElement(actor) {
   }
 
 Hooks.on("renderSceneNavigation", (sceneNav, html, data) => {
+
+  if (shouldHideDueToStreamView()) return;
+
   var viewedScene = sceneNav.scenes.find(x => x.isView);
  
   $(".scenespecific").hide();
@@ -364,6 +375,15 @@ Hooks.on('ready', () => {
   turndown = new TurndownService();
 });
 
+function shouldHideDueToStreamView() {
+  if (game.settings.get("tabbed-chatlog", "hideInStreamView")) {
+    if (window.location.href.endsWith("/stream")) {
+      return true;
+    }
+  }
+  return false;
+}
+
 Hooks.on('init', () => {
 
   game.settings.register('tabbed-chatlog', 'oocWebhook', {
@@ -387,6 +407,15 @@ Hooks.on('init', () => {
   game.settings.register('tabbed-chatlog', 'icChatInOoc', {
     name: game.i18n.localize("TC.SETTINGS.IcChatInOocName"),
     hint: game.i18n.localize("TC.SETTINGS.IcChatInOocHint"),
+    scope: 'world',
+    config: true,
+    default: true,
+    type: Boolean,
+  });
+
+  game.settings.register('tabbed-chatlog', 'hideInStreamView', {
+    name: game.i18n.localize("TC.SETTINGS.HideInStreamViewName"),
+    hint: game.i18n.localize("TC.SETTINGS.HideInStreamViewHint"),
     scope: 'world',
     config: true,
     default: true,

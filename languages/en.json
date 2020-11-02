@@ -10,6 +10,9 @@
     "TC.SETTINGS.IcChatInOocName": "When in the OOC tab, should In Character chat be converted to OOC chat?",
     "TC.SETTINGS.IcChatInOocHint": "This is useful for players who forget to use /ooc",
 
+    "TC.SETTINGS.HideInStreamViewName": "Should Tabbed Chatlog be disabled in the FoundryVTT /stream view?",
+    "TC.SETTINGS.HideInStreamViewHint": "Defaults to True",
+
     "TC.TABS.IC": "In Character",
     "TC.TABS.OOC": "OOC",
     "TC.TABS.Rolls": "Rolls"
