@@ -120,7 +120,9 @@ Hooks.on("renderChatMessage", (chatMessage, html, data) => {
     }
     else if (data.message.type == 5 && sceneMatches) {
       if (!html.hasClass('gm-roll-hidden')) {
-        if (game.dice3d && !game.settings.get("dice-so-nice", "immediatelyDisplayChatMessages")) return;
+        if (game.dice3d && game.settings.get("dice-so-nice", "settings").enabled && game.settings.get("dice-so-nice", "enabled")) {
+          if (!game.settings.get("dice-so-nice", "immediatelyDisplayChatMessages")) return;
+        } 
         html.css("display", "list-item");
       }
     }
