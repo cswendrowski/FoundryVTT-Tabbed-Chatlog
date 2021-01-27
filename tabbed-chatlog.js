@@ -379,7 +379,7 @@ Hooks.on("closeSceneConfig", (app, html, data) => {
 });
 
 Hooks.on('ready', () => {
-  if (window.Narrator !== undefined) { Narrator.msgtype = 2; }
+  if (window.NarratorTools !== undefined) { NarratorTools._msgtype = 2; }
 
   turndown = new TurndownService();
 });
