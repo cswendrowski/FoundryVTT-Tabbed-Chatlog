@@ -379,7 +379,7 @@ Hooks.on("closeSceneConfig", (app, html, data) => {
 });
 
 Hooks.on('ready', () => {
-  if (window.NarratorTools !== undefined) { NarratorTools._msgtype = 2; }
+  if (game.modules.get('narrator-tools')) { NarratorTools._msgtype = 2; }
 
   turndown = new TurndownService();
 });
