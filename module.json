@@ -29,6 +29,11 @@
       "lang": "cn",
       "name": "中文",
       "path": "languages/cn.json"
+    },
+    {
+      "lang": "zh-tw",
+      "name": "正體中文",
+      "path": "languages/zh-tw.json"
     }
   ],
   "url": "https://github.com/cswendrowski/FoundryVTT-tabbed-chatlog",
