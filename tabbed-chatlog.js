@@ -174,6 +174,7 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
   }
   else if (chatMessage.data.type == 5) {
     if (currentTab != "rolls" && sceneMatches && chatMessage.data.whisper.length == 0) {
+      $("#rollsNotification").css({'right': ( $("div#sidebar.app").width() / 3).toString() +'px' } );
       $("#rollsNotification").show();
     }
   }
@@ -181,6 +182,7 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
   {
     if (currentTab != "ic" && sceneMatches)
     { 
+      $("#icNotification").css({'right': ($("div#sidebar.app").width()  / 3 * 2).toString() +'px' } );
       $("#icNotification").show();
     }
   }
@@ -189,6 +191,7 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
     if (salonEnabled && chatMessage.data.type == 4) return;
 
     if (currentTab != "ooc") { 
+      // no adjustment of #oocNotification:right is really needed because its right side does not move.
       $("#oocNotification").show();
     }
   }
