@@ -169,12 +169,13 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
 
   if (chatMessage.data.type == 0) {
     if (currentTab != "rolls" && sceneMatches) {
+	  setRollsNotifyProperties();
       $("#rollsNotification").show();
     }
   }
   else if (chatMessage.data.type == 5) {
     if (currentTab != "rolls" && sceneMatches && chatMessage.data.whisper.length == 0) {
-      $("#rollsNotification").css({'right': ( $("div#sidebar.app").width() / 3).toString() +'px' } );
+       setRollsNotifyProperties();
       $("#rollsNotification").show();
     }
   }
@@ -182,7 +183,7 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
   {
     if (currentTab != "ic" && sceneMatches)
     { 
-      $("#icNotification").css({'right': ($("div#sidebar.app").width()  / 3 * 2).toString() +'px' } );
+      setICNotifyProperties();
       $("#icNotification").show();
     }
   }
@@ -191,7 +192,7 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
     if (salonEnabled && chatMessage.data.type == 4) return;
 
     if (currentTab != "ooc") { 
-      // no adjustment of #oocNotification:right is really needed because its right side does not move.
+      setOOPNotifyProperties();
       $("#oocNotification").show();
     }
   }
@@ -381,11 +382,57 @@ Hooks.on("closeSceneConfig", (app, html, data) => {
   app.object.setFlag('tabbed-chatlog', 'webhook', html.find("input[name ='scenewebhook']")[0].value);
 });
 
+
+Hooks.on('sidebarCollapse',(sidebar,collapsing)=>{
+	if(!collapsing){
+		setALLTabsNotifyProperties();
+	}
+	
+});
+
+
 Hooks.on('ready', () => {
   if (game.modules.get('narrator-tools')) { NarratorTools._msgtype = 2; }
 
   turndown = new TurndownService();
+
+  const sidebar = document.querySelector('#sidebar');
+ 
+  sidebar.addEventListener("mousedown", sidebarMouseDown,false);
+ 
+  function sidebarMouseDown(){
+	  sidebar.addEventListener("mousemove", sidebarMouseMove,false);
+	  sidebar.addEventListener("mouseup", sidebarMouseUp,false);
+  }
+
+  function sidebarMouseUp(){
+	  sidebar.removeEventListener("mousemove", sidebarMouseMove,false);
+	  sidebar.removeEventListener("mouseup", sidebarMouseUp,false);
+  }
+  
+  function sidebarMouseMove(){
+	  setALLTabsNotifyProperties(); 
+  }
+
+
 });
+
+function setICNotifyProperties(){
+	$("#icNotification").css({'right': ($("div#sidebar.app").width()  / 3 * 2).toString() +'px' } );
+};
+function setRollsNotifyProperties(){
+	 $("#rollsNotification").css({'right': ( $("div#sidebar.app").width() / 3).toString() +'px' } );
+};
+function setOOCNotifyProperties(){
+	//NO-OP Nothing to do
+};
+
+function setALLTabsNotifyProperties(){
+  setICNotifyProperties();
+  setRollsNotifyProperties();
+  setOOCNotifyProperties();
+}
+
 
 function shouldHideDueToStreamView() {
   if (game.settings.get("tabbed-chatlog", "hideInStreamView")) {
