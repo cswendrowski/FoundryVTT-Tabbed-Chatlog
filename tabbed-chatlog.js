@@ -488,7 +488,9 @@ async function() {
 function checkDeleteChatMessage(e){
     let result =  checkMessageIsVisible(e.data.type);
 	if ((e.data.type==2 || e.data.type==3) && currentTab!="ic") result=false;
+	if(e.data.speaker.scene)
 	if((e.data.speaker.scene!=game.user.viewedScene) && (e.data.type=2 || e.data.type==3)) result=false;
+	
     if(e.data.blind && e.data.whisper.find(element => element == game.userId)==undefined) result=false;
 	console.warn('checkdeleting', e,result);
 	return result;
