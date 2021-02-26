@@ -13,6 +13,61 @@ let currentTab = "ic";
 let salonEnabled = false;
 let turndown = undefined;
 
+function checkMessageIsVisible(messageType){
+	
+	// determine if a message should be visible
+	if(salonEnabled){
+		switch(messageType){
+			case CHAT_MESSAGE_TYPES.OTHER:messageType=CHAT_MESSAGE_TYPES.IC;
+			break;
+	      	case CHAT_MESSAGE_TYPES.WHISPER: return false;
+		}
+	}
+	switch (currentTab){
+	case "rolls":
+		switch (messageType){
+			case CHAT_MESSAGE_TYPES.OTHER:return true;
+	      	case CHAT_MESSAGE_TYPES.OOC: return false;
+			case CHAT_MESSAGE_TYPES.IC: return false
+			case CHAT_MESSAGE_TYPES.EMOTE: return false
+			case CHAT_MESSAGE_TYPES.WHISPER: return false;
+			case CHAT_MESSAGE_TYPES.ROLL: return true;
+		}
+	break;
+	case "ic":
+		switch (messageType){
+			case CHAT_MESSAGE_TYPES.OTHER: return false;
+			case CHAT_MESSAGE_TYPES.OOC: return false;
+			case CHAT_MESSAGE_TYPES.IC: return true;
+			case CHAT_MESSAGE_TYPES.EMOTE: return true;
+			case CHAT_MESSAGE_TYPES.WHISPER: return false;
+			case CHAT_MESSAGE_TYPES.ROLL: return false;
+		}
+	break;
+	case "ooc":
+		switch (messageType){
+			case CHAT_MESSAGE_TYPES.OTHER: return false;
+			case CHAT_MESSAGE_TYPES.OOC: return true;
+			case CHAT_MESSAGE_TYPES.IC: return false;
+			case CHAT_MESSAGE_TYPES.EMOTE: return false;
+			case CHAT_MESSAGE_TYPES.WHISPER: return true;
+			case CHAT_MESSAGE_TYPES.ROLL: return false;
+		}
+	break;
+	default:
+		console.log("Unknown tab " + tab + "!");
+	}
+	return true; // if there is some future new message type, its probably better to default to be visible than to hide it.
+}
+
+function setClassVisibility(cssClass, visible){
+	if(visible) {
+		cssClass.removeClass("hardHide");
+		cssClass.show();
+	}
+	else
+		cssClass.hide();
+};
 
 Hooks.on("renderChatLog", async function(chatLog, html, user) {
 
@@ -32,51 +87,23 @@ Hooks.on("renderChatLog", async function(chatLog, html, user) {
     callback: function(event, html, tab) { 
       currentTab = tab;
 
-      if (tab == "rolls") {
-        $(".type0").removeClass("hardHide");
-        $(".type0").show();
-        $(".type1").hide();
-        $(".type2").hide();
-        $(".type3").hide();
-        $(".type4").hide();
-        $(".type5").removeClass("hardHide");
-        $(".type5").not(".gm-roll-hidden").show();
-
-        $("#rollsNotification").hide();
-      }
-      else if (tab == "ic") {
-        $(".type1").hide();
-        $(".type2.scene" + game.user.viewedScene).removeClass("hardHide");
-        $(".type2.scene" + game.user.viewedScene).show();
-        $(".type2").not(".scenespecific").show();
-        $(".type3.scene" + game.user.viewedScene).removeClass("hardHide");
-        $(".type3.scene" + game.user.viewedScene).show();
-        $(".type3").not(".scenespecific").show();
-        $(".type4").hide();
-
-        if (!salonEnabled) {
-          $(".type0").hide();
-          $(".type5").hide();
-        }
-
-        $("#icNotification").hide();
-      }
-      else if (tab == "ooc") {
-        $(".type1").removeClass("hardHide");
-        $(".type1").show();
-        $(".type2").hide();
-        $(".type3").hide();
-        
-        if (!salonEnabled) {
-          $(".type0").hide();
-          $(".type4").removeClass("hardHide");
-          $(".type4").show();
-          $(".type5").hide();
-        }
-
-        $("#oocNotification").hide();
-      }
-      else {
+      switch(tab){
+	  case "rolls": case "ic": case "ooc":
+	  
+	    setClassVisibility( $(".type0"), checkMessageIsVisible(CHAT_MESSAGE_TYPES.OTHER));
+	    setClassVisibility( $(".type1"), checkMessageIsVisible(CHAT_MESSAGE_TYPES.OOC));
+	    setClassVisibility( $(".type2").filter(".scenespecific"),false);
+	    setClassVisibility( $(".type2").not(".scenespecific"), checkMessageIsVisible(CHAT_MESSAGE_TYPES.IC) && tab=="ic");
+	    setClassVisibility( $(".type2").filter(".scene" + game.user.viewedScene), checkMessageIsVisible(CHAT_MESSAGE_TYPES.IC) && tab=="ic");
+	    setClassVisibility( $(".type3").filter(".scenespecific"),false);
+	    setClassVisibility( $(".type3").not(".scenespecific"), checkMessageIsVisible(CHAT_MESSAGE_TYPES.EMOTE) && tab=="ic");
+	    setClassVisibility( $(".type3").filter(".scene" + game.user.viewedScene), checkMessageIsVisible(CHAT_MESSAGE_TYPES.EMOTE) && tab=="ic");
+	    setClassVisibility( $(".type4"), checkMessageIsVisible(CHAT_MESSAGE_TYPES.WHISPER));
+	    setClassVisibility( $(".type5").filter(".gm-roll-hidden"), false);
+	    setClassVisibility( $(".type5").not(".gm-roll-hidden"), checkMessageIsVisible(CHAT_MESSAGE_TYPES.ROLL));
+	    $("#"+tab+"Notification").hide();
+	  break;
+      default:
         console.log("Unknown tab " + tab + "!");
       }
 
@@ -192,7 +219,7 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
     if (salonEnabled && chatMessage.data.type == 4) return;
 
     if (currentTab != "ooc") { 
-      setOOPNotifyProperties();
+      setOOCNotifyProperties();
       $("#oocNotification").show();
     }
   }
@@ -442,6 +469,31 @@ function shouldHideDueToStreamView() {
   }
   return false;
 }
+
+
+Messages.prototype.flush = 
+async function() {
+  return Dialog.confirm({
+    title: game.i18n.localize("CHAT.FlushTitle") ,
+    content: game.i18n.localize("CHAT.FlushWarning"),
+    yes: () => this.object.delete([...game.messages].filter(entity => checkDeleteChatMessage(entity)).map(message => message.data._id), {deleteAll: false }),
+    options: {
+      top: window.innerHeight - 150,
+      left: window.innerWidth - 720
+    }
+  });
+};
+
+
+function checkDeleteChatMessage(e){
+    let result =  checkMessageIsVisible(e.data.type);
+	if ((e.data.type==2 || e.data.type==3) && currentTab!="ic") result=false;
+	if((e.data.speaker.scene!=game.user.viewedScene) && (e.data.type=2 || e.data.type==3)) result=false;
+    if(e.data.blind && e.data.whisper.find(element => element == game.userId)==undefined) result=false;
+	console.warn('checkdeleting', e,result);
+	return result;
+}
+
 
 Hooks.on('init', () => {
 
