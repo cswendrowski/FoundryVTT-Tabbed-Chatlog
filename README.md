@@ -12,6 +12,10 @@ Splits the Chatlog into In Character (per scene), Rolls (per scene), and Out of 
 
 ## Changelog
 
+### David Zvekic Fork - 
+-- Now works properly with Vance's Resizable Sidebar.
+-- Flush now only deletes the messages from the active TAB, leaving the messages on other tabs clean.  
+
 ### v1.1.0
 
 Added notifications for new messages in inactive tabs.
