@@ -492,7 +492,7 @@ function checkDeleteChatMessage(e){
 	if((e.data.speaker.scene!=game.user.viewedScene) && (e.data.type=2 || e.data.type==3)) result=false;
 	
     if(e.data.blind && e.data.whisper.find(element => element == game.userId)==undefined) result=false;
-	console.warn('checkdeleting', e,result);
+	//console.warn('checkdeleting', e,result);
 	return result;
 }
 
