@@ -13,7 +13,7 @@ let currentTab = "ic";
 let salonEnabled = false;
 let turndown = undefined;
 
-function checkMessageIsVisible(messageType){
+function isMessageTypeVisible(messageType){
 	
 	// determine if a message should be visible
 	if(salonEnabled){
@@ -60,6 +60,21 @@ function checkMessageIsVisible(messageType){
 	return true; // if there is some future new message type, its probably better to default to be visible than to hide it.
 }
 
+
+function isMessageVisible(e){
+	const messageType=e.data.type;
+   
+	if (!isMessageTypeVisible(messageType)) return false;
+	
+	if(e.data.speaker.scene)
+	if((messageType==CHAT_MESSAGE_TYPES.IC || CHAT_MESSAGE_TYPES.EMOTE)  && (e.data.speaker.scene!=game.user.viewedScene) ) return false;
+
+    if(e.data.blind && e.data.whisper.find(element => element == game.userId)==undefined) return false;
+
+	return true;
+}
+
+
 function setClassVisibility(cssClass, visible){
 	if(visible) {
 		cssClass.removeClass("hardHide");
@@ -90,18 +105,19 @@ Hooks.on("renderChatLog", async function(chatLog, html, user) {
       switch(tab){
 	  case "rolls": case "ic": case "ooc":
 	  
-	    setClassVisibility( $(".type0"), checkMessageIsVisible(CHAT_MESSAGE_TYPES.OTHER));
-	    setClassVisibility( $(".type1"), checkMessageIsVisible(CHAT_MESSAGE_TYPES.OOC));
+	    setClassVisibility( $(".type0"), isMessageTypeVisible(CHAT_MESSAGE_TYPES.OTHER));
+	    setClassVisibility( $(".type1"), isMessageTypeVisible(CHAT_MESSAGE_TYPES.OOC));
 	    setClassVisibility( $(".type2").filter(".scenespecific"),false);
-	    setClassVisibility( $(".type2").not(".scenespecific"), checkMessageIsVisible(CHAT_MESSAGE_TYPES.IC) && tab=="ic");
-	    setClassVisibility( $(".type2").filter(".scene" + game.user.viewedScene), checkMessageIsVisible(CHAT_MESSAGE_TYPES.IC) && tab=="ic");
+	    setClassVisibility( $(".type2").not(".scenespecific"), isMessageTypeVisible(CHAT_MESSAGE_TYPES.IC) );
+	    setClassVisibility( $(".type2").filter(".scene" + game.user.viewedScene), isMessageTypeVisible(CHAT_MESSAGE_TYPES.IC));
 	    setClassVisibility( $(".type3").filter(".scenespecific"),false);
-	    setClassVisibility( $(".type3").not(".scenespecific"), checkMessageIsVisible(CHAT_MESSAGE_TYPES.EMOTE) && tab=="ic");
-	    setClassVisibility( $(".type3").filter(".scene" + game.user.viewedScene), checkMessageIsVisible(CHAT_MESSAGE_TYPES.EMOTE) && tab=="ic");
-	    setClassVisibility( $(".type4"), checkMessageIsVisible(CHAT_MESSAGE_TYPES.WHISPER));
+	    setClassVisibility( $(".type3").not(".scenespecific"), isMessageTypeVisible(CHAT_MESSAGE_TYPES.EMOTE));
+	    setClassVisibility( $(".type3").filter(".scene" + game.user.viewedScene), isMessageTypeVisible(CHAT_MESSAGE_TYPES.EMOTE));
+	    setClassVisibility( $(".type4"), isMessageTypeVisible(CHAT_MESSAGE_TYPES.WHISPER));
 	    setClassVisibility( $(".type5").filter(".gm-roll-hidden"), false);
-	    setClassVisibility( $(".type5").not(".gm-roll-hidden"), checkMessageIsVisible(CHAT_MESSAGE_TYPES.ROLL));
-	    $("#"+tab+"Notification").hide();
+	    setClassVisibility( $(".type5").not(".gm-roll-hidden"), isMessageTypeVisible(CHAT_MESSAGE_TYPES.ROLL));
+		
+	    $("#"+tab+"Notification").hide(); 
 	  break;
       default:
         console.log("Unknown tab " + tab + "!");
@@ -470,13 +486,13 @@ function shouldHideDueToStreamView() {
   return false;
 }
 
-
+//The Localization here should probably be improved
 Messages.prototype.flush = 
 async function() {
   return Dialog.confirm({
     title: game.i18n.localize("CHAT.FlushTitle") ,
     content: game.i18n.localize("CHAT.FlushWarning"),
-    yes: () => this.object.delete([...game.messages].filter(entity => checkDeleteChatMessage(entity)).map(message => message.data._id), {deleteAll: false }),
+    yes: () => this.object.delete([...game.messages].filter(entity => isMessageVisible(entity)).map(message => message.data._id), {deleteAll: false }),
     options: {
       top: window.innerHeight - 150,
       left: window.innerWidth - 720
@@ -485,16 +501,7 @@ async function() {
 };
 
 
-function checkDeleteChatMessage(e){
-    let result =  checkMessageIsVisible(e.data.type);
-	if ((e.data.type==2 || e.data.type==3) && currentTab!="ic") result=false;
-	if(e.data.speaker.scene)
-	if((e.data.speaker.scene!=game.user.viewedScene) && (e.data.type=2 || e.data.type==3)) result=false;
-	
-    if(e.data.blind && e.data.whisper.find(element => element == game.userId)==undefined) result=false;
-	//console.warn('checkdeleting', e,result);
-	return result;
-}
+
 
 
 Hooks.on('init', () => {
