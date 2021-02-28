@@ -63,11 +63,11 @@ function isMessageTypeVisible(messageType){
 
 function isMessageVisible(e){
 	const messageType=e.data.type;
-   
+	
 	if (!isMessageTypeVisible(messageType)) return false;
 	
 	if(e.data.speaker.scene)
-	if((messageType==CHAT_MESSAGE_TYPES.IC || CHAT_MESSAGE_TYPES.EMOTE)  && (e.data.speaker.scene!=game.user.viewedScene) ) return false;
+	if((messageType==CHAT_MESSAGE_TYPES.IC || messageType==CHAT_MESSAGE_TYPES.EMOTE)  && (e.data.speaker.scene!=game.user.viewedScene) ) return false;
 
     if(e.data.blind && e.data.whisper.find(element => element == game.userId)==undefined) return false;
 
