@@ -288,15 +288,23 @@ Hooks.on("preCreateChatMessage", (chatMessage, content) => {
       img = game.data.addresses.remote + "/" + img;
 
       if (!chatMessage.whisper?.length) {
+        let message = chatMessage.content;
+        if (game.modules.get("polyglot")?.active) {
+          import("../polyglot/src/polyglot.js");
+          let lang = PolyGlot.languages[chatMessage.flags.polyglot.language] || chatMessage.flags.polyglot.language
+          if (lang != PolyGlot.defaultLanguage) {
+            message = lang + ": ||" + chatMessage.content + "||";
+          }
+        }
         sendToDiscord(webhook, {
-          content: turndown.turndown(chatMessage.content),
+          content: turndown.turndown(message),
           username: name,
           avatar_url: img
         });
       }
     }
     catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
   else
@@ -313,15 +321,23 @@ Hooks.on("preCreateChatMessage", (chatMessage, content) => {
       img = game.data.addresses.remote + "/" + img;
 
       if (!chatMessage.whisper?.length) {
+        let message = chatMessage.content;
+        if (game.modules.get("polyglot")?.active) {
+          import("../polyglot/src/polyglot.js");
+          let lang = PolyGlot.languages[chatMessage.flags.polyglot.language] || chatMessage.flags.polyglot.language
+          if (lang != PolyGlot.defaultLanguage) {
+            message = lang + ": ||" + chatMessage.content + "||";
+          }
+        }
         sendToDiscord(webhook, {
-          content: turndown.turndown(chatMessage.content),
+          content: turndown.turndown(message),
           username: game.users.get(chatMessage.user).name,
           avatar_url: img
         });
       }
     }
     catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 });
