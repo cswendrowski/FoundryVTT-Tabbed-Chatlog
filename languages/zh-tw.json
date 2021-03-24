@@ -13,6 +13,9 @@
     "TC.SETTINGS.HideInStreamViewName": "在FoundryVTT的/stream瀏覽模式下禁用Tabbed Chatlog？",
     "TC.SETTINGS.HideInStreamViewHint": "默認禁用",
 
+    "TC.SETTINGS.PerSceneName": "是否应按场景拆分“角色和角色”消息？",
+    "TC.SETTINGS.PerSceneHint": "默認禁用",
+
     "TC.TABS.IC": "角色",
     "TC.TABS.OOC": "超遊",
     "TC.TABS.Rolls": "擲骰"

@@ -16,6 +16,9 @@
     "TC.SETTINGS.HideInStreamViewName": "¿Se debe deshabilitar Tabbed Chatlog en la vista FoundryVTT/transmisión?",
     "TC.SETTINGS.HideInStreamViewHint": "Opción habilitada por defecto",
 
+    "TC.SETTINGS.PerSceneName": "¿Deben dividirse los mensajes In Character y Roll por escena? ",
+    "TC.SETTINGS.PerSceneHint": "Opción habilitada por defecto",
+
     "TC.TABS.IC": "Personaje",
     "TC.TABS.OOC": "Jugador",
     "TC.TABS.Rolls": "Tiradas"

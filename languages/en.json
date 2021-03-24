@@ -13,6 +13,9 @@
     "TC.SETTINGS.HideInStreamViewName": "Should Tabbed Chatlog be disabled in the FoundryVTT /stream view?",
     "TC.SETTINGS.HideInStreamViewHint": "Defaults to True",
 
+    "TC.SETTINGS.PerSceneName": "Should In Character and Roll messages be split per Scene?",
+    "TC.SETTINGS.PerSceneHint": "Defaults to True",
+
     "TC.TABS.IC": "In Character",
     "TC.TABS.OOC": "OOC",
     "TC.TABS.Rolls": "Rolls"
