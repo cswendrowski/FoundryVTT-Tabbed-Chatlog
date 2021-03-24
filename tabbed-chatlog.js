@@ -13,6 +13,76 @@ let currentTab = "ic";
 let salonEnabled = false;
 let turndown = undefined;
 
+function isMessageTypeVisible(messageType){
+	
+	// determine if a message should be visible
+	if(salonEnabled){
+		switch(messageType){
+			case CHAT_MESSAGE_TYPES.OTHER:messageType=CHAT_MESSAGE_TYPES.IC;
+			break;
+	      	case CHAT_MESSAGE_TYPES.WHISPER: return false;
+		}
+	}
+	switch (currentTab){
+	case "rolls":
+		switch (messageType){
+			case CHAT_MESSAGE_TYPES.OTHER:return true;
+	      	case CHAT_MESSAGE_TYPES.OOC: return false;
+			case CHAT_MESSAGE_TYPES.IC: return false
+			case CHAT_MESSAGE_TYPES.EMOTE: return false
+			case CHAT_MESSAGE_TYPES.WHISPER: return false;
+			case CHAT_MESSAGE_TYPES.ROLL: return true;
+		}
+	break;
+	case "ic":
+		switch (messageType){
+			case CHAT_MESSAGE_TYPES.OTHER: return false;
+			case CHAT_MESSAGE_TYPES.OOC: return false;
+			case CHAT_MESSAGE_TYPES.IC: return true;
+			case CHAT_MESSAGE_TYPES.EMOTE: return true;
+			case CHAT_MESSAGE_TYPES.WHISPER: return false;
+			case CHAT_MESSAGE_TYPES.ROLL: return false;
+		}
+	break;
+	case "ooc":
+		switch (messageType){
+			case CHAT_MESSAGE_TYPES.OTHER: return false;
+			case CHAT_MESSAGE_TYPES.OOC: return true;
+			case CHAT_MESSAGE_TYPES.IC: return false;
+			case CHAT_MESSAGE_TYPES.EMOTE: return false;
+			case CHAT_MESSAGE_TYPES.WHISPER: return true;
+			case CHAT_MESSAGE_TYPES.ROLL: return false;
+		}
+	break;
+	default:
+		console.log("Unknown tab " + tab + "!");
+	}
+	return true; // if there is some future new message type, its probably better to default to be visible than to hide it.
+}
+
+
+function isMessageVisible(e){
+	const messageType=e.data.type;
+	
+	if (!isMessageTypeVisible(messageType)) return false;
+	
+	if(e.data.speaker.scene)
+	if((messageType==CHAT_MESSAGE_TYPES.IC || messageType==CHAT_MESSAGE_TYPES.EMOTE)  && (e.data.speaker.scene!=game.user.viewedScene) ) return false;
+
+    if(e.data.blind && e.data.whisper.find(element => element == game.userId)==undefined) return false;
+
+	return true;
+}
+
+
+function setClassVisibility(cssClass, visible){
+	if(visible) {
+		cssClass.removeClass("hardHide");
+		cssClass.show();
+	}
+	else
+		cssClass.hide();
+};
 
 Hooks.on("renderChatLog", async function(chatLog, html, user) {
 
@@ -32,51 +102,24 @@ Hooks.on("renderChatLog", async function(chatLog, html, user) {
     callback: function(event, html, tab) { 
       currentTab = tab;
 
-      if (tab == "rolls") {
-        $(".type0").removeClass("hardHide");
-        $(".type0").show();
-        $(".type1").hide();
-        $(".type2").hide();
-        $(".type3").hide();
-        $(".type4").hide();
-        $(".type5").removeClass("hardHide");
-        $(".type5").not(".gm-roll-hidden").show();
-
-        $("#rollsNotification").hide();
-      }
-      else if (tab == "ic") {
-        $(".type1").hide();
-        $(".type2.scene" + game.user.viewedScene).removeClass("hardHide");
-        $(".type2.scene" + game.user.viewedScene).show();
-        $(".type2").not(".scenespecific").show();
-        $(".type3.scene" + game.user.viewedScene).removeClass("hardHide");
-        $(".type3.scene" + game.user.viewedScene).show();
-        $(".type3").not(".scenespecific").show();
-        $(".type4").hide();
-
-        if (!salonEnabled) {
-          $(".type0").hide();
-          $(".type5").hide();
-        }
-
-        $("#icNotification").hide();
-      }
-      else if (tab == "ooc") {
-        $(".type1").removeClass("hardHide");
-        $(".type1").show();
-        $(".type2").hide();
-        $(".type3").hide();
-        
-        if (!salonEnabled) {
-          $(".type0").hide();
-          $(".type4").removeClass("hardHide");
-          $(".type4").show();
-          $(".type5").hide();
-        }
-
-        $("#oocNotification").hide();
-      }
-      else {
+      switch(tab){
+	  case "rolls": case "ic": case "ooc":
+	  
+	    setClassVisibility( $(".type0"), isMessageTypeVisible(CHAT_MESSAGE_TYPES.OTHER));
+	    setClassVisibility( $(".type1"), isMessageTypeVisible(CHAT_MESSAGE_TYPES.OOC));
+	    setClassVisibility( $(".type2").filter(".scenespecific"),false);
+	    setClassVisibility( $(".type2").not(".scenespecific"), isMessageTypeVisible(CHAT_MESSAGE_TYPES.IC) );
+	    setClassVisibility( $(".type2").filter(".scene" + game.user.viewedScene), isMessageTypeVisible(CHAT_MESSAGE_TYPES.IC));
+	    setClassVisibility( $(".type3").filter(".scenespecific"),false);
+	    setClassVisibility( $(".type3").not(".scenespecific"), isMessageTypeVisible(CHAT_MESSAGE_TYPES.EMOTE));
+	    setClassVisibility( $(".type3").filter(".scene" + game.user.viewedScene), isMessageTypeVisible(CHAT_MESSAGE_TYPES.EMOTE));
+	    setClassVisibility( $(".type4"), isMessageTypeVisible(CHAT_MESSAGE_TYPES.WHISPER));
+	    setClassVisibility( $(".type5").filter(".gm-roll-hidden"), false);
+	    setClassVisibility( $(".type5").not(".gm-roll-hidden"), isMessageTypeVisible(CHAT_MESSAGE_TYPES.ROLL));
+		
+	    $("#"+tab+"Notification").hide(); 
+	  break;
+      default:
         console.log("Unknown tab " + tab + "!");
       }
 
@@ -169,11 +212,13 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
 
   if (chatMessage.data.type == 0) {
     if (currentTab != "rolls" && sceneMatches) {
+	  setRollsNotifyProperties();
       $("#rollsNotification").show();
     }
   }
   else if (chatMessage.data.type == 5) {
     if (currentTab != "rolls" && sceneMatches && chatMessage.data.whisper.length == 0) {
+       setRollsNotifyProperties();
       $("#rollsNotification").show();
     }
   }
@@ -181,6 +226,7 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
   {
     if (currentTab != "ic" && sceneMatches)
     { 
+      setICNotifyProperties();
       $("#icNotification").show();
     }
   }
@@ -189,6 +235,7 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
     if (salonEnabled && chatMessage.data.type == 4) return;
 
     if (currentTab != "ooc") { 
+      setOOCNotifyProperties();
       $("#oocNotification").show();
     }
   }
@@ -378,11 +425,57 @@ Hooks.on("closeSceneConfig", (app, html, data) => {
   app.object.setFlag('tabbed-chatlog', 'webhook', html.find("input[name ='scenewebhook']")[0].value);
 });
 
+
+Hooks.on('sidebarCollapse',(sidebar,collapsing)=>{
+	if(!collapsing){
+		setALLTabsNotifyProperties();
+	}
+	
+});
+
+
 Hooks.on('ready', () => {
   if (game.modules.get('narrator-tools')) { NarratorTools._msgtype = 2; }
 
   turndown = new TurndownService();
+
+  const sidebar = document.querySelector('#sidebar');
+ 
+  sidebar.addEventListener("mousedown", sidebarMouseDown,false);
+ 
+  function sidebarMouseDown(){
+	  sidebar.addEventListener("mousemove", sidebarMouseMove,false);
+	  sidebar.addEventListener("mouseup", sidebarMouseUp,false);
+  }
+
+  function sidebarMouseUp(){
+	  sidebar.removeEventListener("mousemove", sidebarMouseMove,false);
+	  sidebar.removeEventListener("mouseup", sidebarMouseUp,false);
+  }
+  
+  function sidebarMouseMove(){
+	  setALLTabsNotifyProperties(); 
+  }
+
+
 });
+
+function setICNotifyProperties(){
+	$("#icNotification").css({'right': ($("div#sidebar.app").width()  / 3 * 2).toString() +'px' } );
+};
+function setRollsNotifyProperties(){
+	 $("#rollsNotification").css({'right': ( $("div#sidebar.app").width() / 3).toString() +'px' } );
+};
+function setOOCNotifyProperties(){
+	//NO-OP Nothing to do
+};
+
+function setALLTabsNotifyProperties(){
+  setICNotifyProperties();
+  setRollsNotifyProperties();
+  setOOCNotifyProperties();
+}
+
 
 function shouldHideDueToStreamView() {
   if (game.settings.get("tabbed-chatlog", "hideInStreamView")) {
@@ -392,6 +485,24 @@ function shouldHideDueToStreamView() {
   }
   return false;
 }
+
+//The Localization here should probably be improved
+Messages.prototype.flush = 
+async function() {
+  return Dialog.confirm({
+    title: game.i18n.localize("CHAT.FlushTitle") ,
+    content: game.i18n.localize("CHAT.FlushWarning"),
+    yes: () => this.object.delete([...game.messages].filter(entity => isMessageVisible(entity)).map(message => message.data._id), {deleteAll: false }),
+    options: {
+      top: window.innerHeight - 150,
+      left: window.innerWidth - 720
+    }
+  });
+};
+
+
+
+
 
 Hooks.on('init', () => {
 
