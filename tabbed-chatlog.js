@@ -53,7 +53,7 @@ function isMessageTypeVisible(messageType) {
                 case CHAT_MESSAGE_TYPES.EMOTE:
                     return true;
                 case CHAT_MESSAGE_TYPES.WHISPER:
-                    return false;
+                    return game.settings.get("tabbed-chatlog", "icWhispers");
                 case CHAT_MESSAGE_TYPES.ROLL:
                     return false;
             }
@@ -69,7 +69,7 @@ function isMessageTypeVisible(messageType) {
                 case CHAT_MESSAGE_TYPES.EMOTE:
                     return false;
                 case CHAT_MESSAGE_TYPES.WHISPER:
-                    return true;
+                    return !game.settings.get("tabbed-chatlog", "icWhispers");
                 case CHAT_MESSAGE_TYPES.ROLL:
                     return false;
             }
@@ -114,7 +114,9 @@ Hooks.on("renderChatLog", async function (chatLog, html, user) {
     toPrepend += `<a class="item ooc" data-tab="ooc">${game.i18n.localize("TC.TABS.OOC")}</a></nav><i id="oocNotification" class="notification-pip fas fa-exclamation-circle" style="display: none;"></i>`;
     html.prepend(toPrepend);
 
-    const tabs = new TabsV2({
+    window.game.tabbedchat = {};
+
+    window.game.tabbedchat.tabs = new TabsV2({
         navSelector: ".tabs",
         contentSelector: ".content",
         initial: "tab1",
@@ -147,7 +149,11 @@ Hooks.on("renderChatLog", async function (chatLog, html, user) {
             $("#chat-log").scrollTop(9999999);
         }
     });
-    tabs.bind(html[0]);
+    window.game.tabbedchat.tabs.bind(html[0]);
+
+    $("[data-tab=\"chat\"]").click(() => {
+        setTimeout(() => $(".item." + currentTab).addClass("active"), 100);
+    });
 });
 
 Hooks.on("renderChatMessage", (chatMessage, html, data) => {
@@ -162,7 +168,7 @@ Hooks.on("renderChatMessage", (chatMessage, html, data) => {
         if (data.message.speaker.scene != undefined && game.settings.get("tabbed-chatlog", "perScene")) {
             html.addClass("scenespecific");
             html.addClass("scene" + data.message.speaker.scene);
-            if (data.message.speaker.scene != game.user.viewedScene) {
+            if (data.message.speaker.scene != game.user?.viewedScene) {
                 sceneMatches = false;
             }
         }
@@ -182,23 +188,20 @@ Hooks.on("renderChatMessage", (chatMessage, html, data) => {
             html.css("display", "list-item");
         } else if (data.message.type == 5 && sceneMatches) {
             if (!html.hasClass('gm-roll-hidden')) {
-                if (game.dice3d && game.settings.get("dice-so-nice", "settings").enabled && game.settings.get("dice-so-nice", "enabled")) {
-                    if (!game.settings.get("dice-so-nice", "immediatelyDisplayChatMessages")) return;
-                }
                 html.css("display", "list-item");
             }
         } else {
             html.css("display", "none");
         }
     } else if (currentTab == "ic") {
-        if ((data.message.type == 2 || data.message.type == 3) && sceneMatches) {
+        if ((data.message.type == 2 || data.message.type == 3 || (data.message.type == 4 && game.settings.get("tabbed-chatlog", "icWhispers"))) && sceneMatches) {
             html.css("display", "list-item");
         } else {
             html.css("cssText", "display: none !important;");
             html.addClass("hardHide");
         }
     } else if (currentTab == "ooc") {
-        if (data.message.type == 1 || data.message.type == 4) {
+        if (data.message.type == 1 || (data.message.type == 4 && !game.settings.get("tabbed-chatlog", "icWhispers"))) {
             html.css("display", "list-item");
         } else {
             html.css("display", "none");
@@ -216,32 +219,52 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
     var sceneMatches = true;
 
     if (chatMessage.data.speaker.scene) {
-        if (chatMessage.data.speaker.scene != game.user.viewedScene) {
+        if (chatMessage.data.speaker.scene != game.user?.viewedScene) {
             sceneMatches = false;
         }
     }
 
     if (chatMessage.data.type == 0) {
         if (currentTab != "rolls" && sceneMatches) {
-            setRollsNotifyProperties();
-            $("#rollsNotification").show();
+            if (game.settings.get("tabbed-chatlog", "autoNavigate")) {
+                window.game.tabbedchat.tabs.activate("rolls", {triggerCallback: true});
+            }
+            else {
+                setRollsNotifyProperties();
+                $("#rollsNotification").show();
+            }
         }
     } else if (chatMessage.data.type == 5) {
         if (currentTab != "rolls" && sceneMatches && chatMessage.data.whisper.length == 0) {
-            setRollsNotifyProperties();
-            $("#rollsNotification").show();
+            if (game.settings.get("tabbed-chatlog", "autoNavigate")) {
+                window.game.tabbedchat.tabs.activate("rolls", {triggerCallback: true});
+            }
+            else {
+                setRollsNotifyProperties();
+                $("#rollsNotification").show();
+            }
         }
-    } else if (chatMessage.data.type == 2 || chatMessage.data.type == 3) {
+    } else if (chatMessage.data.type == 2 || chatMessage.data.type == 3 || (chatMessage.data.type == 4 && game.settings.get("tabbed-chatlog", "icWhispers"))) {
         if (currentTab != "ic" && sceneMatches) {
-            setICNotifyProperties();
-            $("#icNotification").show();
+            if (game.settings.get("tabbed-chatlog", "autoNavigate")) {
+                window.game.tabbedchat.tabs.activate("ic", {triggerCallback: true});
+            }
+            else {
+                setICNotifyProperties();
+                $("#icNotification").show();
+            }
         }
     } else {
-        if (salonEnabled && chatMessage.data.type == 4) return;
+        if (salonEnabled && chatMessage.data.type == 4 && !game.settings.get("tabbed-chatlog", "icWhispers")) return;
 
         if (currentTab != "ooc") {
-            setOOCNotifyProperties();
-            $("#oocNotification").show();
+            if (game.settings.get("tabbed-chatlog", "autoNavigate")) {
+                window.game.tabbedchat.tabs.activate("ooc", {triggerCallback: true});
+            }
+            else {
+                setOOCNotifyProperties();
+                $("#oocNotification").show();
+            }
         }
     }
 });
@@ -440,7 +463,7 @@ Hooks.on('sidebarCollapse', (sidebar, collapsing) => {
 
 
 Hooks.on('ready', () => {
-    if (game.modules.get('narrator-tools')) {
+    if (game.modules.get('narrator-tools')?.active) {
         NarratorTools._msgtype = 2;
     }
 
@@ -554,6 +577,24 @@ Hooks.on('init', () => {
         scope: 'world',
         config: true,
         default: true,
+        type: Boolean,
+    });
+
+    game.settings.register('tabbed-chatlog', 'icWhispers', {
+        name: game.i18n.localize("TC.SETTINGS.IcWhispersName"),
+        hint: game.i18n.localize("TC.SETTINGS.IcWhispersHint"),
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
+    });
+
+    game.settings.register('tabbed-chatlog', 'autoNavigate', {
+        name: game.i18n.localize("TC.SETTINGS.AutoNavigateName"),
+        hint: game.i18n.localize("TC.SETTINGS.AutoNavigateHint"),
+        scope: 'client',
+        config: true,
+        default: false,
         type: Boolean,
     });
 

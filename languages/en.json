@@ -16,6 +16,12 @@
     "TC.SETTINGS.PerSceneName": "Should In Character and Roll messages be split per Scene?",
     "TC.SETTINGS.PerSceneHint": "Defaults to True",
 
+    "TC.SETTINGS.AutoNavigateName": "Should new messages automatically swap to that tab?",
+    "TC.SETTINGS.AutoNavigateHint": "Defaults to False",
+
+    "TC.SETTINGS.IcWhispersName": "Swap Whispers to show up in In Character chat instead of OOC?",
+    "TC.SETTINGS.IcWhispersHint": "Defaults to False",
+
     "TC.TABS.IC": "In Character",
     "TC.TABS.OOC": "OOC",
     "TC.TABS.Rolls": "Rolls"

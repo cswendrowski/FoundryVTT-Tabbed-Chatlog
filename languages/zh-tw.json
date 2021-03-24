@@ -16,6 +16,12 @@
     "TC.SETTINGS.PerSceneName": "是否应按场景拆分“角色和角色”消息？",
     "TC.SETTINGS.PerSceneHint": "默認禁用",
 
+    "TC.SETTINGS.AutoNavigateName": "新消息應該自動交換到該選項卡嗎？",
+    "TC.SETTINGS.AutoNavigateHint": "默认为错误的",
+
+    "TC.SETTINGS.IcWhispersName": "交換低語以顯示在“角色內聊天”中而不是OOC中？ ",
+    "TC.SETTINGS.IcWhispersHint": "默认为错误的",
+
     "TC.TABS.IC": "角色",
     "TC.TABS.OOC": "超遊",
     "TC.TABS.Rolls": "擲骰"
