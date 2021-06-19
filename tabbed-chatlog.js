@@ -128,8 +128,10 @@ Hooks.on("renderChatLog", async function (chatLog, html, user) {
                     setClassVisibility($(".type3").not(".scenespecific"), isMessageTypeVisible(CONST.CHAT_MESSAGE_TYPES.EMOTE));
                     setClassVisibility($(".type3").filter(".scene" + game.user.viewedScene), isMessageTypeVisible(CONST.CHAT_MESSAGE_TYPES.EMOTE));
                     setClassVisibility($(".type4"), isMessageTypeVisible(CONST.CHAT_MESSAGE_TYPES.WHISPER));
-                    setClassVisibility($(".type5").filter(".gm-roll-hidden"), false);
-                    setClassVisibility($(".type5").not(".gm-roll-hidden"), isMessageTypeVisible(CONST.CHAT_MESSAGE_TYPES.ROLL));
+					setClassVisibility($(".type5").filter(".scenespecific"), false);
+					setClassVisibility($(".type5").filter(".gm-roll-hidden"), false);
+					setClassVisibility($(".type5").filter(".scene" + game.user.viewedScene), isMessageTypeVisible(CONST.CHAT_MESSAGE_TYPES.ROLL));
+                    setClassVisibility($(".type5").not(".scenespecific").not(".gm-roll-hidden"), isMessageTypeVisible(CONST.CHAT_MESSAGE_TYPES.ROLL));
 
                     $("#" + tab + "Notification").hide();
                     break;
@@ -185,7 +187,8 @@ Hooks.on("renderChatMessage", (chatMessage, html, data) => {
                 html.css("display", "list-item");
             }
         } else {
-            html.css("display", "none");
+            html.css("cssText", "display: none !important;");
+            html.addClass("hardHide");
         }
     } else if (currentTab == "ic") {
         if ((data.message.type == CONST.CHAT_MESSAGE_TYPES.IC
