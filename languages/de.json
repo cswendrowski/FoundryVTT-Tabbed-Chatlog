@@ -1,0 +1,28 @@
+{
+    "TC.SETTINGS.OocWebhookName": "Discord Webhook für Out of Character Chat",
+    "TC.SETTINGS.OocWebhookHint": "OOC-Chat ist immer global und nie szenenspezifisch",
+    "TC.SETTINGS.IcFallbackWebhookName": "Discord Webhook für In-Character-Chat für eine Szene ohne registrierten Webhook",
+    "TC.SETTINGS.IcFallbackWebhookHint": "Wenn Sie keine szenenbezogenen Webhooks wünschen, setzen Sie einfach diesen Wert und fahren Sie fort",
+
+    "TC.SETTINGS.IcSceneWebhookName": "Discord Webhook für In-Character-Chat für diese Szene",
+    "TC.SETTINGS.IcSceneWebhookHint": "https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks",
+
+    "TC.SETTINGS.IcChatInOocName": "Soll der In-Character-Chat in der Registerkarte OOC in einen OOC-Chat umgewandelt werden?",
+    "TC.SETTINGS.IcChatInOocHint": "Dies ist nützlich für Spieler, die vergessen, /ooc zu benutzen",
+
+    "TC.SETTINGS.HideInStreamViewName": "Soll Tabbed Chatlog in der FoundryVTT /stream-Ansicht deaktiviert werden?",
+    "TC.SETTINGS.HideInStreamViewHint": "Ist standardmäßig auf True eingestellt",
+
+    "TC.SETTINGS.PerSceneName": "Sollen InCharacter- und Roll-Meldungen pro Szene aufgeteilt werden?",
+    "TC.SETTINGS.PerSceneHint": "Standardmäßig auf True",
+
+    "TC.SETTINGS.AutoNavigateName": "Sollen neue Nachrichten automatisch auf diese Registerkarte wechseln?",
+    "TC.SETTINGS.AutoNavigateHint": "Ist standardmäßig auf False eingestellt",
+
+    "TC.SETTINGS.IcWhispersName": "Whispers vertauschen, um im In-Character-Chat statt OOC angezeigt zu werden?",
+    "TC.SETTINGS.IcWhispersHint": "Defaults to False",
+
+    "TC.TABS.IC": "In Character",
+    "TC.TABS.OOC": "OOC",
+    "TC.TABS.Rolls": "Rolls"
+}

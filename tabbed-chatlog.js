@@ -1,15 +1,6 @@
 (() => {
 })();
 
-const CHAT_MESSAGE_TYPES = {
-    OTHER: 0,
-    OOC: 1,
-    IC: 2,
-    EMOTE: 3,
-    WHISPER: 4,
-    ROLL: 5
-};
-
 let currentTab = "ic";
 let salonEnabled = false;
 let turndown = undefined;
@@ -18,59 +9,59 @@ function isMessageTypeVisible(messageType) {
 
     if (salonEnabled) {
         switch (messageType) {
-            case CHAT_MESSAGE_TYPES.OTHER:
-                messageType = CHAT_MESSAGE_TYPES.IC;
+            case CONST.CHAT_MESSAGE_TYPES.OTHER:
+                messageType = CONST.CHAT_MESSAGE_TYPES.IC;
                 break;
-            case CHAT_MESSAGE_TYPES.WHISPER:
+            case CONST.CHAT_MESSAGE_TYPES.WHISPER:
                 return false;
         }
     }
     switch (currentTab) {
         case "rolls":
             switch (messageType) {
-                case CHAT_MESSAGE_TYPES.OTHER:
+                case CONST.CHAT_MESSAGE_TYPES.OTHER:
                     return true;
-                case CHAT_MESSAGE_TYPES.OOC:
+                case CONST.CHAT_MESSAGE_TYPES.OOC:
                     return false;
-                case CHAT_MESSAGE_TYPES.IC:
+                case CONST.CHAT_MESSAGE_TYPES.IC:
                     return false
-                case CHAT_MESSAGE_TYPES.EMOTE:
+                case CONST.CHAT_MESSAGE_TYPES.EMOTE:
                     return false
-                case CHAT_MESSAGE_TYPES.WHISPER:
+                case CONST.CHAT_MESSAGE_TYPES.WHISPER:
                     return false;
-                case CHAT_MESSAGE_TYPES.ROLL:
+                case CONST.CHAT_MESSAGE_TYPES.ROLL:
                     return true;
             }
             break;
         case "ic":
             switch (messageType) {
-                case CHAT_MESSAGE_TYPES.OTHER:
+                case CONST.CHAT_MESSAGE_TYPES.OTHER:
                     return false;
-                case CHAT_MESSAGE_TYPES.OOC:
+                case CONST.CHAT_MESSAGE_TYPES.OOC:
                     return false;
-                case CHAT_MESSAGE_TYPES.IC:
+                case CONST.CHAT_MESSAGE_TYPES.IC:
                     return true;
-                case CHAT_MESSAGE_TYPES.EMOTE:
+                case CONST.CHAT_MESSAGE_TYPES.EMOTE:
                     return true;
-                case CHAT_MESSAGE_TYPES.WHISPER:
+                case CONST.CHAT_MESSAGE_TYPES.WHISPER:
                     return game.settings.get("tabbed-chatlog", "icWhispers");
-                case CHAT_MESSAGE_TYPES.ROLL:
+                case CONST.CHAT_MESSAGE_TYPES.ROLL:
                     return false;
             }
             break;
         case "ooc":
             switch (messageType) {
-                case CHAT_MESSAGE_TYPES.OTHER:
+                case CONST.CHAT_MESSAGE_TYPES.OTHER:
                     return false;
-                case CHAT_MESSAGE_TYPES.OOC:
+                case CONST.CHAT_MESSAGE_TYPES.OOC:
                     return true;
-                case CHAT_MESSAGE_TYPES.IC:
+                case CONST.CHAT_MESSAGE_TYPES.IC:
                     return false;
-                case CHAT_MESSAGE_TYPES.EMOTE:
+                case CONST.CHAT_MESSAGE_TYPES.EMOTE:
                     return false;
-                case CHAT_MESSAGE_TYPES.WHISPER:
+                case CONST.CHAT_MESSAGE_TYPES.WHISPER:
                     return !game.settings.get("tabbed-chatlog", "icWhispers");
-                case CHAT_MESSAGE_TYPES.ROLL:
+                case CONST.CHAT_MESSAGE_TYPES.ROLL:
                     return false;
             }
             break;
@@ -87,7 +78,7 @@ function isMessageVisible(e) {
     if (!isMessageTypeVisible(messageType)) return false;
 
     if (e.data.speaker.scene && game.settings.get("tabbed-chatlog", "perScene")) {
-        if ((messageType == CHAT_MESSAGE_TYPES.IC || messageType == CHAT_MESSAGE_TYPES.EMOTE) && (e.data.speaker.scene != game.user.viewedScene)) return false;
+        if ((messageType == CONST.CHAT_MESSAGE_TYPES.IC || messageType == CONST.CHAT_MESSAGE_TYPES.EMOTE) && (e.data.speaker.scene != game.user.viewedScene)) return false;
     }
 
     if (e.data.blind && e.data.whisper.find(element => element == game.userId) == undefined) return false;
@@ -128,17 +119,19 @@ Hooks.on("renderChatLog", async function (chatLog, html, user) {
                 case "ic":
                 case "ooc":
 
-                    setClassVisibility($(".type0"), isMessageTypeVisible(CHAT_MESSAGE_TYPES.OTHER));
-                    setClassVisibility($(".type1"), isMessageTypeVisible(CHAT_MESSAGE_TYPES.OOC));
+                    setClassVisibility($(".type0"), isMessageTypeVisible(CONST.CHAT_MESSAGE_TYPES.OTHER));
+                    setClassVisibility($(".type1"), isMessageTypeVisible(CONST.CHAT_MESSAGE_TYPES.OOC));
                     setClassVisibility($(".type2").filter(".scenespecific"), false);
-                    setClassVisibility($(".type2").not(".scenespecific"), isMessageTypeVisible(CHAT_MESSAGE_TYPES.IC));
-                    setClassVisibility($(".type2").filter(".scene" + game.user.viewedScene), isMessageTypeVisible(CHAT_MESSAGE_TYPES.IC));
+                    setClassVisibility($(".type2").not(".scenespecific"), isMessageTypeVisible(CONST.CHAT_MESSAGE_TYPES.IC));
+                    setClassVisibility($(".type2").filter(".scene" + game.user.viewedScene), isMessageTypeVisible(CONST.CHAT_MESSAGE_TYPES.IC));
                     setClassVisibility($(".type3").filter(".scenespecific"), false);
-                    setClassVisibility($(".type3").not(".scenespecific"), isMessageTypeVisible(CHAT_MESSAGE_TYPES.EMOTE));
-                    setClassVisibility($(".type3").filter(".scene" + game.user.viewedScene), isMessageTypeVisible(CHAT_MESSAGE_TYPES.EMOTE));
-                    setClassVisibility($(".type4"), isMessageTypeVisible(CHAT_MESSAGE_TYPES.WHISPER));
-                    setClassVisibility($(".type5").filter(".gm-roll-hidden"), false);
-                    setClassVisibility($(".type5").not(".gm-roll-hidden"), isMessageTypeVisible(CHAT_MESSAGE_TYPES.ROLL));
+                    setClassVisibility($(".type3").not(".scenespecific"), isMessageTypeVisible(CONST.CHAT_MESSAGE_TYPES.EMOTE));
+                    setClassVisibility($(".type3").filter(".scene" + game.user.viewedScene), isMessageTypeVisible(CONST.CHAT_MESSAGE_TYPES.EMOTE));
+                    setClassVisibility($(".type4"), isMessageTypeVisible(CONST.CHAT_MESSAGE_TYPES.WHISPER));
+					setClassVisibility($(".type5").filter(".scenespecific"), false);
+					setClassVisibility($(".type5").filter(".gm-roll-hidden"), false);
+					setClassVisibility($(".type5").filter(".scene" + game.user.viewedScene), isMessageTypeVisible(CONST.CHAT_MESSAGE_TYPES.ROLL));
+                    setClassVisibility($(".type5").not(".scenespecific").not(".gm-roll-hidden"), isMessageTypeVisible(CONST.CHAT_MESSAGE_TYPES.ROLL));
 
                     $("#" + tab + "Notification").hide();
                     break;
@@ -164,7 +157,10 @@ Hooks.on("renderChatMessage", (chatMessage, html, data) => {
 
     var sceneMatches = true;
 
-    if (data.message.type == 0 || data.message.type == 2 || data.message.type == 3 || data.message.type == 5) {
+    if (data.message.type == CONST.CHAT_MESSAGE_TYPES.OTHER
+    	|| data.message.type == CONST.CHAT_MESSAGE_TYPES.IC
+		|| data.message.type == CONST.CHAT_MESSAGE_TYPES.EMOTE
+		|| data.message.type == CONST.CHAT_MESSAGE_TYPES.ROLL) {
         if (data.message.speaker.scene != undefined && game.settings.get("tabbed-chatlog", "perScene")) {
             html.addClass("scenespecific");
             html.addClass("scene" + data.message.speaker.scene);
@@ -174,34 +170,37 @@ Hooks.on("renderChatMessage", (chatMessage, html, data) => {
         }
     }
 
-    if (salonEnabled && chatMessage.data.type == 5) {
+    if (salonEnabled && chatMessage.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL) {
         if (!html.hasClass('gm-roll-hidden')) {
             html.css("display", "list-item");
         }
         return;
     }
 
-    if (salonEnabled && chatMessage.data.type == 4) return;
+    if (salonEnabled && chatMessage.data.type == CONST.CHAT_MESSAGE_TYPES.WHISPER) return;
 
     if (currentTab == "rolls") {
-        if (chatMessage.data.type == 0 && sceneMatches) {
+        if (chatMessage.data.type == CONST.CHAT_MESSAGE_TYPES.OTHER && sceneMatches) {
             html.css("display", "list-item");
-        } else if (data.message.type == 5 && sceneMatches) {
+        } else if (data.message.type == CONST.CHAT_MESSAGE_TYPES.ROLL && sceneMatches) {
             if (!html.hasClass('gm-roll-hidden')) {
                 html.css("display", "list-item");
             }
         } else {
-            html.css("display", "none");
+            html.css("cssText", "display: none !important;");
+            html.addClass("hardHide");
         }
     } else if (currentTab == "ic") {
-        if ((data.message.type == 2 || data.message.type == 3 || (data.message.type == 4 && game.settings.get("tabbed-chatlog", "icWhispers"))) && sceneMatches) {
+        if ((data.message.type == CONST.CHAT_MESSAGE_TYPES.IC
+    	  || data.message.type == CONST.CHAT_MESSAGE_TYPES.EMOTE
+		  || (data.message.type == CONST.CHAT_MESSAGE_TYPES.WHISPER && game.settings.get("tabbed-chatlog", "icWhispers"))) && sceneMatches) {
             html.css("display", "list-item");
         } else {
             html.css("cssText", "display: none !important;");
             html.addClass("hardHide");
         }
     } else if (currentTab == "ooc") {
-        if (data.message.type == 1 || (data.message.type == 4 && !game.settings.get("tabbed-chatlog", "icWhispers"))) {
+        if (data.message.type == CONST.CHAT_MESSAGE_TYPES.OOC || (data.message.type == CONST.CHAT_MESSAGE_TYPES.WHISPER && !game.settings.get("tabbed-chatlog", "icWhispers"))) {
             html.css("display", "list-item");
         } else {
             html.css("display", "none");
@@ -224,7 +223,7 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
         }
     }
 
-    if (chatMessage.data.type == 0) {
+    if (chatMessage.data.type == CONST.CHAT_MESSAGE_TYPES.OTHER) {
         if (currentTab != "rolls" && sceneMatches) {
             if (game.settings.get("tabbed-chatlog", "autoNavigate")) {
                 window.game.tabbedchat.tabs.activate("rolls", {triggerCallback: true});
@@ -234,7 +233,7 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
                 $("#rollsNotification").show();
             }
         }
-    } else if (chatMessage.data.type == 5) {
+    } else if (chatMessage.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL) {
         if (currentTab != "rolls" && sceneMatches && chatMessage.data.whisper.length == 0) {
             if (game.settings.get("tabbed-chatlog", "autoNavigate")) {
                 window.game.tabbedchat.tabs.activate("rolls", {triggerCallback: true});
@@ -244,7 +243,9 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
                 $("#rollsNotification").show();
             }
         }
-    } else if (chatMessage.data.type == 2 || chatMessage.data.type == 3 || (chatMessage.data.type == 4 && game.settings.get("tabbed-chatlog", "icWhispers"))) {
+    } else if (chatMessage.data.type == CONST.CHAT_MESSAGE_TYPES.IC
+            || chatMessage.data.type == CONST.CHAT_MESSAGE_TYPES.EMOTE
+            || (chatMessage.data.type == CONST.CHAT_MESSAGE_TYPES.WHISPER && game.settings.get("tabbed-chatlog", "icWhispers"))) {
         if (currentTab != "ic" && sceneMatches) {
             if (game.settings.get("tabbed-chatlog", "autoNavigate")) {
                 window.game.tabbedchat.tabs.activate("ic", {triggerCallback: true});
@@ -255,7 +256,7 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
             }
         }
     } else {
-        if (salonEnabled && chatMessage.data.type == 4 && !game.settings.get("tabbed-chatlog", "icWhispers")) return;
+        if (salonEnabled && chatMessage.data.type == CONST.CHAT_MESSAGE_TYPES.WHISPER && !game.settings.get("tabbed-chatlog", "icWhispers")) return;
 
         if (currentTab != "ooc") {
             if (game.settings.get("tabbed-chatlog", "autoNavigate")) {
@@ -273,19 +274,19 @@ Hooks.on("preCreateChatMessage", (chatMessage, content) => {
 
     if (game.settings.get('tabbed-chatlog', 'icChatInOoc')) {
         if (currentTab == "ooc") {
-            if (chatMessage.type == 2) {
-                chatMessage.type = 1;
-                delete (chatMessage.speaker);
+            if (chatMessage.data.type == CONST.CHAT_MESSAGE_TYPES.IC) {
+                chatMessage.data.type = CONST.CHAT_MESSAGE_TYPES.OOC;
+                delete (chatMessage.data.speaker);
                 console.log(chatMessage);
             }
         }
     }
 
-    if (chatMessage.type == 0 || chatMessage.type == 5) {
+    if (chatMessage.data.type == CONST.CHAT_MESSAGE_TYPES.OTHER || chatMessage.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL) {
 
-    } else if (chatMessage.type == 2 || chatMessage.type == 3) {
+    } else if (chatMessage.data.type == CONST.CHAT_MESSAGE_TYPES.IC || chatMessage.data.type == CONST.CHAT_MESSAGE_TYPES.EMOTE) {
         try {
-            let scene = game.scenes.get(chatMessage.speaker.scene);
+            let scene = game.scenes.get(chatMessage.data.speaker.scene);
             let webhook = scene.getFlag("tabbed-chatlog", "webhook");
 
             if (webhook == undefined || webhook == "") {
@@ -296,7 +297,7 @@ Hooks.on("preCreateChatMessage", (chatMessage, content) => {
                 return;
             }
 
-            let speaker = chatMessage.speaker
+            let speaker = chatMessage.data.speaker
             var actor = loadActorForChatMessage(speaker);
             let img = "";
             let name = "";
@@ -304,19 +305,19 @@ Hooks.on("preCreateChatMessage", (chatMessage, content) => {
                 img = generatePortraitImageElement(actor);
                 name = actor.name;
             } else {
-                img = game.users.get(chatMessage.user).avatar;
+                img = game.users.get(chatMessage.user.id).avatar;
                 name = speaker.alias;
             }
 
             img = game.data.addresses.remote + "/" + img;
 
             if (!chatMessage.whisper?.length) {
-                let message = chatMessage.content;
+                let message = chatMessage.data.content;
                 if (game.modules.get("polyglot")?.active) {
                     import("../polyglot/src/polyglot.js");
                     let lang = PolyGlot.languages[chatMessage.flags.polyglot.language] || chatMessage.flags.polyglot.language
                     if (lang != PolyGlot.defaultLanguage) {
-                        message = lang + ": ||" + chatMessage.content + "||";
+                        message = lang + ": ||" + chatMessage.data.content + "||";
                     }
                 }
                 sendToDiscord(webhook, {
@@ -336,21 +337,21 @@ Hooks.on("preCreateChatMessage", (chatMessage, content) => {
                 return;
             }
 
-            let img = game.users.get(chatMessage.user).avatar;
+            let img = game.users.get(chatMessage.user.id).avatar;
             img = game.data.addresses.remote + "/" + img;
 
             if (!chatMessage.whisper?.length) {
-                let message = chatMessage.content;
+                let message = chatMessage.data.content;
                 if (game.modules.get("polyglot")?.active) {
                     import("../polyglot/src/polyglot.js");
                     let lang = PolyGlot.languages[chatMessage.flags.polyglot.language] || chatMessage.flags.polyglot.language
                     if (lang != PolyGlot.defaultLanguage) {
-                        message = lang + ": ||" + chatMessage.content + "||";
+                        message = lang + ": ||" + chatMessage.data.content + "||";
                     }
                 }
                 sendToDiscord(webhook, {
                     content: turndown.turndown(message),
-                    username: game.users.get(chatMessage.user).name,
+                    username: game.users.get(chatMessage.user.id).name,
                     avatar_url: img
                 });
             }
