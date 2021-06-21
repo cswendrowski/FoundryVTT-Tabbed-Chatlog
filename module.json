@@ -2,7 +2,7 @@
 	"name": "tabbed-chatlog",
 	"title": "Tabbed Chatlog",
 	"description": "Splits the Chatlog into In Character (per scene), Rolls (per scene), and Out of Character (global).",
-	"version": "1.6.2",
+	"version": "1.6.3",
 	"minimumCoreVersion": "0.8.0",
 	"compatibleCoreVersion": "0.8.7",
 	"author": "Cody Swendrowski <cody@swendrowski.us>",
