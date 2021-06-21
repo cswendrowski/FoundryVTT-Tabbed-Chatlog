@@ -275,8 +275,12 @@ Hooks.on("preCreateChatMessage", (chatMessage, content) => {
     if (game.settings.get('tabbed-chatlog', 'icChatInOoc')) {
         if (currentTab == "ooc") {
             if (chatMessage.data.type == CONST.CHAT_MESSAGE_TYPES.IC) {
+                chatMessage.data._source.type = CONST.CHAT_MESSAGE_TYPES.OOC;
                 chatMessage.data.type = CONST.CHAT_MESSAGE_TYPES.OOC;
+                content.type = CONST.CHAT_MESSAGE_TYPES.OOC
+                delete (content.speaker);
                 delete (chatMessage.data.speaker);
+                delete (chatMessage.data._source.speaker);
                 console.log(chatMessage);
             }
         }
