@@ -315,7 +315,7 @@ Hooks.on("preCreateChatMessage", (chatMessage, content) => {
 
             img = game.data.addresses.remote + "/" + img;
 
-            if (!chatMessage.whisper?.length) {
+            if (!chatMessage.data.whisper?.length) {
                 let message = chatMessage.data.content;
                 if (game.modules.get("polyglot")?.active) {
                     import("../polyglot/src/polyglot.js");
@@ -344,7 +344,7 @@ Hooks.on("preCreateChatMessage", (chatMessage, content) => {
             let img = game.users.get(chatMessage.user.id).avatar;
             img = game.data.addresses.remote + "/" + img;
 
-            if (!chatMessage.whisper?.length) {
+            if (!chatMessage.data.whisper?.length) {
                 let message = chatMessage.data.content;
                 if (game.modules.get("polyglot")?.active) {
                     import("../polyglot/src/polyglot.js");
