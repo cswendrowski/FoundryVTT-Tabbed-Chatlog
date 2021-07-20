@@ -273,8 +273,12 @@ Hooks.on("preCreateChatMessage", (chatMessage, content) => {
     if (game.settings.get('tabbed-chatlog', 'icChatInOoc')) {
         if (currentTab == "ooc") {
             if (chatMessage.data.type == CONST.CHAT_MESSAGE_TYPES.IC) {
+                chatMessage.data._source.type = CONST.CHAT_MESSAGE_TYPES.OOC;
                 chatMessage.data.type = CONST.CHAT_MESSAGE_TYPES.OOC;
+                content.type = CONST.CHAT_MESSAGE_TYPES.OOC
+                delete (content.speaker);
                 delete (chatMessage.data.speaker);
+                delete (chatMessage.data._source.speaker);
                 console.log(chatMessage);
             }
         }
@@ -309,7 +313,7 @@ Hooks.on("preCreateChatMessage", (chatMessage, content) => {
 
             img = game.data.addresses.remote + "/" + img;
 
-            if (!chatMessage.whisper?.length) {
+            if (!chatMessage.data.whisper?.length) {
                 let message = chatMessage.data.content;
                 if (game.modules.get("polyglot")?.active) {
                     const LanguageProvider = polyglot.polyglot.LanguageProvider;
@@ -338,7 +342,7 @@ Hooks.on("preCreateChatMessage", (chatMessage, content) => {
             let img = game.users.get(chatMessage.user.id).avatar;
             img = game.data.addresses.remote + "/" + img;
 
-            if (!chatMessage.whisper?.length) {
+            if (!chatMessage.data.whisper?.length) {
                 let message = chatMessage.data.content;
                 if (game.modules.get("polyglot")?.active) {
                     let lang = chatMessage.data.flags.polyglot.language
