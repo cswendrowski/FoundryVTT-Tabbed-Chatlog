@@ -1,0 +1,28 @@
+{
+    "TC.SETTINGS.OocWebhookName": "유저 대화(ooc) 채팅 디스코드 웹 훅",
+    "TC.SETTINGS.OocWebhookHint": "유저 대화(ooc) 채팅은 항상 모든 씬에 보여집니다.",
+    "TC.SETTINGS.IcFallbackWebhookName": "등록된 웹 훅이 없는 장면의 캐릭터 대화(ic) 채팅 디스코드 웹 훅",
+    "TC.SETTINGS.IcFallbackWebhookHint": "각 장면마다 웹 훅이 있는 것을 원치 않을 경우, 이것을 설정하고 이동하세요.",
+
+    "TC.SETTINGS.IcSceneWebhookName": "이 장면의 캐릭터 대화(ic) 채팅 디스코드 웹 훅",
+    "TC.SETTINGS.IcSceneWebhookHint": "https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks",
+
+    "TC.SETTINGS.IcChatInOocName": "잡담 탭에 있을 때, 캐릭터 대화(ic) 채팅을 유저 대화(ooc) 채팅으로 바꿀까요?",
+    "TC.SETTINGS.IcChatInOocHint": "/ooc 를 쓰는 것을 자주 잊는 플레이어에게 유용합니다.",
+
+    "TC.SETTINGS.HideInStreamViewName": "/stream view 일 때 Tabbed Chatlog 모듈을 사용 해제합니까?",
+    "TC.SETTINGS.HideInStreamViewHint": "기본값은 True",
+
+    "TC.SETTINGS.PerSceneName": "캐릭터 대화(ic) 메시지와 굴림 메시지를 장면마다 구분해서 표시할까요?",
+    "TC.SETTINGS.PerSceneHint": "기본값은 True",
+
+    "TC.SETTINGS.AutoNavigateName": "새로운 메시지가 있을 때 자동으로 그 탭으로 이동할까요?",
+    "TC.SETTINGS.AutoNavigateHint": "기본값은 False",
+
+    "TC.SETTINGS.IcWhispersName": "귓속말이 유저 대화(ooc) 채팅 대신 캐릭터 대화(ic) 채팅으로 보이게 할까요?",
+    "TC.SETTINGS.IcWhispersHint": "기본값은 False",
+
+    "TC.TABS.IC": "캐릭터 대화",
+    "TC.TABS.OOC": "유저 대화",
+    "TC.TABS.Rolls": "굴림 결과"
+}
