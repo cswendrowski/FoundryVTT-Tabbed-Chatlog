@@ -135,8 +135,6 @@ Hooks.on("renderChatLog", async function (chatLog, html, user) {
 
                     $("#" + tab + "Notification").hide();
                     break;
-                default:
-                    console.log("Unknown tab " + tab + "!");
             }
 
             $("#chat-log").scrollTop(9999999);
@@ -492,15 +490,18 @@ Hooks.on('ready', () => {
 });
 
 function setICNotifyProperties() {
-    $("#icNotification").css({'right': ($("div#sidebar.app").width() / 3 * 2).toString() + 'px'});
+    const nTabs = $("nav.tabbedchatlog.tabs > a.item").length;
+    $("#icNotification").css({'right': ($("div#sidebar.app").width() / nTabs * (nTabs - 1)).toString() + 'px'});
 };
 
 function setRollsNotifyProperties() {
-    $("#rollsNotification").css({'right': ($("div#sidebar.app").width() / 3).toString() + 'px'});
+    const nTabs = $("nav.tabbedchatlog.tabs > a.item").length;
+    $("#rollsNotification").css({'right': ($("div#sidebar.app").width() / nTabs * (nTabs - 2)).toString() + 'px'});
 };
 
 function setOOCNotifyProperties() {
-    //NO-OP Nothing to do
+    const nTabs = $("nav.tabbedchatlog.tabs > a.item").length;
+    $("#oocNotification").css({'right': ($("div#sidebar.app").width() / nTabs * (nTabs - 3)).toString() + 'px'});
 };
 
 function setALLTabsNotifyProperties() {
