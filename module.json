@@ -34,10 +34,15 @@
 			"name": "正體中文",
 			"path": "languages/zh-tw.json"
 		},
-				{
+		{
 			"lang": "de",
 			"name": "Deutsch",
 			"path": "languages/de.json"
+		},
+		{
+			"lang": "ko",
+			"name": "Korean",
+			"path": "languages/ko.json"
 		}
 	],
 	"url": "https://github.com/cswendrowski/FoundryVTT-tabbed-chatlog",
