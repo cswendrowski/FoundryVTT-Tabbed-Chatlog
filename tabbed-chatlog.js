@@ -1,6 +1,3 @@
-(() => {
-})();
-
 let currentTab = "ic";
 let salonEnabled = false;
 let turndown = undefined;
@@ -530,7 +527,7 @@ Messages.prototype.flush =
         return Dialog.confirm({
             title: game.i18n.localize("CHAT.FlushTitle"),
             content: game.i18n.localize("CHAT.FlushWarning"),
-            yes: () => this.object.delete([...game.messages].filter(entity => isMessageVisible(entity)).map(message => message.data._id), {deleteAll: false}),
+            yes: () => ChatMessage.deleteDocuments([...game.messages].filter(entity => isMessageVisible(entity)).map(message => message.id)),
             options: {
                 top: window.innerHeight - 150,
                 left: window.innerWidth - 720

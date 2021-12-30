@@ -13,8 +13,11 @@
     border-radius: 5px 5px 0 0;
 }
 
+a.item.rolls.active {}
+
 .tabbedchatlog .item {
     height: 18px;
+    flex: 1;
 }
 
 .type0 {
