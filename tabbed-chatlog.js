@@ -275,7 +275,7 @@ Hooks.on("preCreateChatMessage", (chatMessage, content) => {
                 content.type = CONST.CHAT_MESSAGE_TYPES.OOC
                 delete (content.speaker);
                 delete (chatMessage.data.speaker);
-                delete (chatMessage.data._source.speaker);
+                chatMessage.data._source.speaker = null;
                 console.log(chatMessage);
             }
         }
