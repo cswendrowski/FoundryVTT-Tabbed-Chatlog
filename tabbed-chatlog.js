@@ -313,10 +313,9 @@ Hooks.on("preCreateChatMessage", (chatMessage, content) => {
             if (!chatMessage.data.whisper?.length) {
                 let message = chatMessage.data.content;
                 if (game.modules.get("polyglot")?.active) {
-                    const LanguageProvider = polyglot.polyglot.LanguageProvider;
-                    let lang = chatMessage.data.flags.polyglot.language
-                    if (lang != LanguageProvider.defaultLanguage) {
-                        message = LanguageProvider.languages[lang] + ": ||" + chatMessage.data.content + "||";
+                    const lang = chatMessage.flags.polyglot.language;
+                    if (lang !== game.polyglot.defaultLanguage) {
+                        message = game.polyglot.languages[lang].label + ": ||" + message + "||";
                     }
                 }
                 sendToDiscord(webhook, {
@@ -342,10 +341,9 @@ Hooks.on("preCreateChatMessage", (chatMessage, content) => {
             if (!chatMessage.data.whisper?.length) {
                 let message = chatMessage.data.content;
                 if (game.modules.get("polyglot")?.active) {
-                    let lang = chatMessage.data.flags.polyglot.language
-                    const LanguageProvider = polyglot.polyglot.LanguageProvider;
-                    if (lang != LanguageProvider.defaultLanguage) {
-                        message = LanguageProvider.languages[lang] + ": ||" + chatMessage.data.content + "||";
+                    const lang = chatMessage.flags.polyglot.language;
+                    if (lang !== game.polyglot.defaultLanguage) {
+                        message = game.polyglot.languages[lang].label + ": ||" + message + "||";
                     }
                 }
                 sendToDiscord(webhook, {
