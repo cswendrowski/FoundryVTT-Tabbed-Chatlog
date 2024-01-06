@@ -71,7 +71,6 @@ function isMessageTypeVisible(messageType) {
 
 function isMessageVisible(e) {
     const messageType = e.type;
-    console.log(e)
     if (!isMessageTypeVisible(messageType)) return false;
 
     if (e.speaker.scene && game.settings.get("tabbed-chatlog", "perScene")) {
@@ -229,7 +228,6 @@ Hooks.on("createChatMessage", (chatMessage, content) => {
             }
         }
     } else if (chatMessage.type == CONST.CHAT_MESSAGE_TYPES.ROLL) {
-        console.log(chatMessage)
         if (currentTab != "rolls" && sceneMatches && chatMessage.whisper.length == 0) {
             if (game.settings.get("tabbed-chatlog", "autoNavigate")) {
                 window.game.tabbedchat.tabs.activate("rolls", {triggerCallback: true});
