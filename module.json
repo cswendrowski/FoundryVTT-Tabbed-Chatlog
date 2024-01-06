@@ -1,51 +1,57 @@
 {
-	"name": "tabbed-chatlog",
-	"title": "Tabbed Chatlog",
-	"description": "Splits the Chatlog into In Character (per scene), Rolls (per scene), and Out of Character (global).",
-	"version": "1.6.4",
-	"minimumCoreVersion": "0.8.0",
-	"compatibleCoreVersion": "9",
-	"author": "Cody Swendrowski <cody@swendrowski.us>",
-	"esmodules": [
-		"./tabbed-chatlog.js"
-	],
-	"scripts": [],
-	"styles": [
-		"/styles/tabbed-chatlog.css"
-	],
-	"languages": [
-		{
-			"lang": "en",
-			"name": "English",
-			"path": "languages/en.json"
-		},
-		{
-			"lang": "es",
-			"name": "Español",
-			"path": "languages/es.json"
-		},
-		{
-			"lang": "cn",
-			"name": "中文",
-			"path": "languages/cn.json"
-		},
-		{
-			"lang": "zh-tw",
-			"name": "正體中文",
-			"path": "languages/zh-tw.json"
-		},
-		{
-			"lang": "de",
-			"name": "Deutsch",
-			"path": "languages/de.json"
-		},
-		{
-			"lang": "ko",
-			"name": "Korean",
-			"path": "languages/ko.json"
-		}
-	],
-	"url": "https://github.com/cswendrowski/FoundryVTT-tabbed-chatlog",
-	"manifest": "https://github.com/cswendrowski/FoundryVTT-tabbed-chatlog/releases/download/latest/module.json",
-	"download": "https://github.com/cswendrowski/FoundryVTT-tabbed-chatlog/releases/download/1.6.4/module.zip"
+  "title": "Tabbed Chatlog",
+  "description": "Splits the Chatlog into In Character (per scene), Rolls (per scene), and Out of Character (global).",
+  "version": "1.6.5",
+  "esmodules": [
+    "tabbed-chatlog.js"
+  ],
+  "styles": [
+    "/styles/tabbed-chatlog.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "languages/en.json",
+      "flags": {}
+    },
+    {
+      "lang": "es",
+      "name": "Español",
+      "path": "languages/es.json",
+      "flags": {}
+    },
+    {
+      "lang": "cn",
+      "name": "中文",
+      "path": "languages/cn.json",
+      "flags": {}
+    },
+    {
+      "lang": "zh-tw",
+      "name": "正體中文",
+      "path": "languages/zh-tw.json",
+      "flags": {}
+    },
+    {
+      "lang": "de",
+      "name": "Deutsch",
+      "path": "languages/de.json",
+      "flags": {}
+    },
+    {
+      "lang": "ko",
+      "name": "Korean",
+      "path": "languages/ko.json",
+      "flags": {}
+    }
+  ],
+  "url": "https://github.com/cswendrowski/FoundryVTT-tabbed-chatlog",
+  "manifest": "https://github.com/cswendrowski/FoundryVTT-tabbed-chatlog/releases/download/latest/module.json",
+  "download": "https://github.com/cswendrowski/FoundryVTT-tabbed-chatlog/releases/download/1.6.5/module.zip",
+  "id": "tabbed-chatlog",
+  "compatibility": {
+    "minimum": "11",
+    "verified": "11"
+  }
 }
